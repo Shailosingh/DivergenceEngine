@@ -1,15 +1,15 @@
 #include "Demo.h"
 
 //Sends the Application object to the Engine
-DivergenceEngine::Application* DivergenceEngine::CreateApplication(HINSTANCE hInstance, LPWSTR lpCmdLine)
+DivergenceEngine::Application* DivergenceEngine::CreateApplication(LPWSTR lpCmdLine)
 {
-	return new Demo(hInstance, lpCmdLine);
+	return new Demo(lpCmdLine);
 }
 
 //Class functions----------------------------------------------------------------------------------
-Demo::Demo(HINSTANCE hInstance, LPWSTR lpCmdLine)
+Demo::Demo(LPWSTR lpCmdLine)
 {
-	processInstance = hInstance;
+	processInstance = GetModuleHandle(nullptr);
 	commandLineArgs = lpCmdLine;
 	DivergenceEngine::Logger::Log(L"Demo Constructed");
 }

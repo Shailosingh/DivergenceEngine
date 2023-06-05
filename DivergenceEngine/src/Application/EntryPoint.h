@@ -2,9 +2,10 @@
 #include <Windows.h>
 #include "Logger/Logger.h"
 #include "Application/Application.h"
+#include "Window/Window.h"
 
 //External function that shall setup the application
-extern DivergenceEngine::Application* DivergenceEngine::CreateApplication(HINSTANCE hInstance, LPWSTR lpCmdLine);
+extern DivergenceEngine::Application* DivergenceEngine::CreateApplication(LPWSTR lpCmdLine);
 
 //Entry point of program
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
@@ -12,10 +13,12 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	DivergenceEngine::Logger::Log(L"Welcome to the Divergence Engine! Here we take the road less travelled by...");
 
 	//Retrieve the Application object from the user
-	DivergenceEngine::Application* application = DivergenceEngine::CreateApplication(hInstance, lpCmdLine);
+	DivergenceEngine::Application* application = DivergenceEngine::CreateApplication(lpCmdLine);
 	
 	//Initialize the application (all windows and other info)
 	application->Initialize();
+
+	DivergenceEngine::Window window(800, 450, L"Test Window");
 
 	//TODO: Message loop
 	MSG incomingMessage = { 0 };

@@ -4,7 +4,7 @@
 class Demo : public DivergenceEngine::Application
 {
 public:
-	Demo(HINSTANCE hInstance, LPWSTR lpCmdLine);
+	Demo(LPWSTR lpCmdLine);
 	~Demo() override;
 	
 	void Initialize() override;

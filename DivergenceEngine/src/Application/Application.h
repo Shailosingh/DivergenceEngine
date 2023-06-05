@@ -20,5 +20,5 @@ namespace DivergenceEngine
 	};
 
 	//USER MUST DEFINE THIS FUNCTION
-	Application* CreateApplication(HINSTANCE hInstance, LPWSTR lpCmdLine);
+	Application* CreateApplication(LPWSTR lpCmdLine);
 }
