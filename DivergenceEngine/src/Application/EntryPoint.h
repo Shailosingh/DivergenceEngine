@@ -18,8 +18,6 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	//Initialize the application (all windows and other info)
 	application->Initialize();
 
-	DivergenceEngine::Window window(800, 450, L"Test Window");
-
 	//TODO: Message loop
 	MSG incomingMessage = { 0 };
 	while (incomingMessage.message != WM_QUIT)

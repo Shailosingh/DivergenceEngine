@@ -45,12 +45,13 @@ namespace DivergenceEngine
 	}
 	
 	//Window Implementation------------------------------------------------------------------------
-	Window::Window(uint16_t clientWidth, uint16_t clientHeight, const wchar_t* windowTitle)
+	Window::Window(uint16_t clientWidth, uint16_t clientHeight, const wchar_t* windowTitle, SignalWindowDestructionFunction signalFunction)
 	{
 		//Initialize Datafields
 		ClientWidth = clientWidth;
 		ClientHeight = clientHeight;
 		WindowTitle = windowTitle;
+		SignalFunction = signalFunction;
 		
 		//Create window rect from client size
 		DWORD windowStyle = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
@@ -85,9 +86,62 @@ namespace DivergenceEngine
 
 	Window::~Window()
 	{
-		OnWindowDestruction();
+		//Don't destroy the moved window
+		if (WindowHandle == nullptr)
+		{
+			return;
+		}
+		
 		DestroyWindow(WindowHandle);
 		Logger::Log(std::format(L"Window '{}' Destructed", WindowTitle));
+	}
+
+	Window::Window(Window&& otherWindow) noexcept
+	{
+		//Copy otherWindow's datafields
+		WindowHandle = otherWindow.WindowHandle;
+		ClientWidth = otherWindow.ClientWidth;
+		ClientHeight = otherWindow.ClientHeight;
+		WindowTitle = otherWindow.WindowTitle;
+		SignalFunction = otherWindow.SignalFunction;
+		
+		//Invalidate the otherWindow's handle
+		otherWindow.WindowHandle = nullptr;
+
+		//Set the new address of the window object
+		SetWindowLongPtr(WindowHandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+		
+		Logger::Log(std::format(L"Window '{}' Moved, via move constructor", WindowTitle));
+	}
+
+	Window& Window::operator=(Window&& otherWindow) noexcept
+	{
+		if (this->WindowHandle != otherWindow.WindowHandle)
+		{
+			//Destroy "this" window if it isn't null
+			if (this->WindowHandle != nullptr)
+			{
+				DestroyWindow(WindowHandle);
+				Logger::Log(std::format(L"Window '{}' Destructed", WindowTitle));
+			}
+			
+			//Copy otherWindow's datafields
+			WindowHandle = otherWindow.WindowHandle;
+			ClientWidth = otherWindow.ClientWidth;
+			ClientHeight = otherWindow.ClientHeight;
+			WindowTitle = otherWindow.WindowTitle;
+			SignalFunction = otherWindow.SignalFunction;
+
+			//Invalidate the otherWindow's handle
+			otherWindow.WindowHandle = nullptr;
+
+			//Set the new address of the window object
+			SetWindowLongPtr(WindowHandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+			
+			Logger::Log(std::format(L"Window '{}' Moved, via move assignment operator", WindowTitle));
+		}
+		
+		return *this;
 	}
 
 	LRESULT Window::HandleMessageSetup(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -103,8 +157,8 @@ namespace DivergenceEngine
 			SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWindow));
 
 			//Set the new message proc as the HandleMessageThunk function
-			Logger::Log(L"Set non-static class message proc to Window");
 			SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&Window::HandleMessageThunk));
+			Logger::Log(std::format(L"Set non-static class message proc to Window '{}'", pWindow->WindowTitle));
 
 			//Forward the message to the actual message handler function
 			return pWindow->HandleMessage(hWnd, uMsg, wParam, lParam);
@@ -128,16 +182,24 @@ namespace DivergenceEngine
 		switch (uMsg)
 		{
 		case WM_CLOSE:
-			//TODO: Create function that signals application that window must be closed
-			PostQuitMessage(0);
+			if (OnWindowDestructionRequest())
+			{
+				SignalFunction(hWnd);
+			}
 			return 0;
 		}
 
 		return DefWindowProc(hWnd, uMsg, wParam, lParam);
 	}
 
-	void Window::OnWindowDestruction()
+	bool Window::OnWindowDestructionRequest()
 	{
-		
+		return true;
+	}
+	
+
+	bool Window::IsEqualHandle(HWND windowHandle) const noexcept
+	{
+		return WindowHandle == windowHandle;
 	}
 }
