@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <string>
 #include <vector>
+#include <memory>
 #include "Window/Window.h"
 
 namespace DivergenceEngine
@@ -9,7 +10,7 @@ namespace DivergenceEngine
 	class Application
 	{
 	private:
-		inline static std::vector<Window> ListOfApplicationWindows;
+		inline static std::vector<std::unique_ptr<Window>> ListOfApplicationWindows;
 		
 	protected:
 		HINSTANCE processInstance = nullptr;
@@ -24,9 +25,9 @@ namespace DivergenceEngine
 		virtual void Initialize() = 0;
 
 		//Window management functions
-		static void AddWindow(Window& window);
+		static void AddWindow(std::unique_ptr<Window>&& window);
 		static void RemoveWindow(HWND windowHandle);
-		static void DrawAllWindows();
+		static void UpdateAndDrawAllWindows();
 	};
 
 	//USER MUST DEFINE THIS FUNCTION

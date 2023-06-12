@@ -27,7 +27,7 @@ namespace DivergenceEngine
 		//std::wstring wideString(narrowString.begin(), narrowString.end());
 
 		//Allocates a wstring with appropriate number of characters (except for null) to take in the converted narrow string
-		size_t numberOfCharactersInWideString = MultiByteToWideChar(CP_UTF8, 0, narrowString.c_str(), -1, NULL, 0) - 1;
+		int numberOfCharactersInWideString = MultiByteToWideChar(CP_UTF8, 0, narrowString.c_str(), -1, NULL, 0) - 1;
 		std::wstring wideString(numberOfCharactersInWideString, 0);
 
 		//Fills and returns the wide string

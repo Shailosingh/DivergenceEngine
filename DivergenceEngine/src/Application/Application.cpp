@@ -17,7 +17,7 @@ namespace DivergenceEngine
 	
 	}
 
-	void Application::AddWindow(Window& window)
+	void Application::AddWindow(std::unique_ptr<Window>&& window)
 	{
 		ListOfApplicationWindows.push_back(std::move(window));
 	}
@@ -26,7 +26,7 @@ namespace DivergenceEngine
 	{
 		for (int index = 0; index < ListOfApplicationWindows.size(); index++)
 		{
-			if (ListOfApplicationWindows[index].IsEqualHandle(windowHandle))
+			if (ListOfApplicationWindows[index]->IsEqualHandle(windowHandle))
 			{
 				ListOfApplicationWindows.erase(ListOfApplicationWindows.begin() + index);
 				break;
@@ -39,8 +39,12 @@ namespace DivergenceEngine
 		}
 	}
 
-	void Application::DrawAllWindows()
+	void Application::UpdateAndDrawAllWindows()
 	{
-
+		//Cycle through every window and draw them
+		for (std::unique_ptr<Window>& window : ListOfApplicationWindows)
+		{
+			window->UpdateAndDraw();
+		}
 	}
 }

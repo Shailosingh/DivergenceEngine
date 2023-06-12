@@ -90,9 +90,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Demo.cpp" />
+    <ClCompile Include="src\TypableTitleWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Demo.h" />
+    <ClInclude Include="src\TypableTitleWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

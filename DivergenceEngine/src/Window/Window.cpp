@@ -48,8 +48,8 @@ namespace DivergenceEngine
 	Window::Window(uint16_t clientWidth, uint16_t clientHeight, const wchar_t* windowTitle, SignalWindowDestructionFunction signalFunction)
 	{
 		//Initialize Datafields
-		ClientWidth = clientWidth;
-		ClientHeight = clientHeight;
+		InternalClientWidth = clientWidth;
+		InternalClientHeight = clientHeight;
 		WindowTitle = windowTitle;
 		SignalFunction = signalFunction;
 		
@@ -100,8 +100,8 @@ namespace DivergenceEngine
 	{
 		//Copy otherWindow's datafields
 		WindowHandle = otherWindow.WindowHandle;
-		ClientWidth = otherWindow.ClientWidth;
-		ClientHeight = otherWindow.ClientHeight;
+		InternalClientWidth = otherWindow.InternalClientWidth;
+		InternalClientHeight = otherWindow.InternalClientHeight;
 		WindowTitle = otherWindow.WindowTitle;
 		SignalFunction = otherWindow.SignalFunction;
 		
@@ -127,8 +127,8 @@ namespace DivergenceEngine
 			
 			//Copy otherWindow's datafields
 			WindowHandle = otherWindow.WindowHandle;
-			ClientWidth = otherWindow.ClientWidth;
-			ClientHeight = otherWindow.ClientHeight;
+			InternalClientWidth = otherWindow.InternalClientWidth;
+			InternalClientHeight = otherWindow.InternalClientHeight;
 			WindowTitle = otherWindow.WindowTitle;
 			SignalFunction = otherWindow.SignalFunction;
 
@@ -179,6 +179,9 @@ namespace DivergenceEngine
 
 	LRESULT Window::HandleMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
+		//Initialize variables
+		bool keyPreviouslyPressed;
+		
 		switch (uMsg)
 		{
 		case WM_CLOSE:
@@ -187,19 +190,65 @@ namespace DivergenceEngine
 				SignalFunction(hWnd);
 			}
 			return 0;
+			break;
+
+		case WM_KILLFOCUS:
+			KeyboardObject.ClearKeyStates();
+			break;
+
+		case WM_KEYDOWN:
+		case WM_SYSKEYDOWN:
+			keyPreviouslyPressed = lParam & ((LPARAM)1 << 30);
+			if (!keyPreviouslyPressed || KeyboardObject.AutoRepeatIsEnabled())
+			{
+				KeyboardObject.OnKeyPressed(static_cast<uint8_t>(wParam));
+			}
+			break;
+
+		case WM_KEYUP:
+		case WM_SYSKEYUP:
+			KeyboardObject.OnKeyReleased(static_cast<uint8_t>(wParam));
+			break;
+
+		case WM_CHAR:
+			KeyboardObject.OnChar(static_cast<uint8_t>(wParam));
+			break;
 		}
 
 		return DefWindowProc(hWnd, uMsg, wParam, lParam);
 	}
 
+	void Window::RenderWindow()
+	{
+		//TODO
+	}
+	
+	void Window::UpdateAndDraw()
+	{
+		UpdateWindow();
+		RenderWindow();
+	}
+
+	//Overridable functions------------------------------------------------------------------------
 	bool Window::OnWindowDestructionRequest()
 	{
 		return true;
 	}
 	
-
+	//Helpers--------------------------------------------------------------------------------------
 	bool Window::IsEqualHandle(HWND windowHandle) const noexcept
 	{
 		return WindowHandle == windowHandle;
+	}
+	
+	std::wstring Window::GetWindowTitle() const noexcept
+	{
+		return WindowTitle;
+	}
+
+	void Window::SetWindowTitle(const std::wstring& windowTitle) noexcept
+	{
+		WindowTitle = windowTitle;
+		SetWindowText(WindowHandle, WindowTitle.c_str());
 	}
 }

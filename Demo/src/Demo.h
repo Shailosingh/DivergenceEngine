@@ -1,5 +1,6 @@
 #pragma once
 #include <DivergenceEngine.h>
+#include "Application/EntryPoint.h"
 
 class Demo : public DivergenceEngine::Application
 {

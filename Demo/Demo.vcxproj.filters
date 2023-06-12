@@ -18,9 +18,15 @@
     <ClCompile Include="src\Demo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\TypableTitleWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Demo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TypableTitleWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
