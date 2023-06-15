@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include "Window/Window.h"
+#include "StepTimer.h"
 
 namespace DivergenceEngine
 {
@@ -11,10 +12,11 @@ namespace DivergenceEngine
 	{
 	private:
 		inline static std::vector<std::unique_ptr<Window>> ListOfApplicationWindows;
+		inline static DX::StepTimer Timer;
 		
 	protected:
-		HINSTANCE processInstance = nullptr;
-		std::wstring commandLineArgs = L"";
+		HINSTANCE ProcessInstance = nullptr;
+		std::wstring CommandLineArgs = L"";
 		
 	public:
 		//Constructors and Destructors

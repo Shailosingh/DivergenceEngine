@@ -223,9 +223,9 @@ namespace DivergenceEngine
 		//TODO
 	}
 	
-	void Window::UpdateAndDraw()
+	void Window::UpdateAndDraw(const DX::StepTimer& timer)
 	{
-		UpdateWindow();
+		UpdateWindow(timer);
 		RenderWindow();
 	}
 

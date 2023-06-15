@@ -11,7 +11,7 @@ TypableTitleWindow::~TypableTitleWindow()
 	DivergenceEngine::Logger::Log(L"TypableTitleWindow destructed");
 }
 
-void TypableTitleWindow::UpdateWindow()
+void TypableTitleWindow::UpdateWindow(const DX::StepTimer& timer)
 {
 	//Handle the char queue
 	while (!KeyboardObject.CharQueueIsEmpty())

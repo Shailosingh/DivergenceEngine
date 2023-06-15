@@ -7,6 +7,10 @@ namespace DivergenceEngine
 	{
 		//This is a game engine. A game will probably have 5 windows max. Reserve enough memory for that and if there is more, there will be reallocation
 		ListOfApplicationWindows.reserve(5);
+
+		//By default, set the timer to 60 fps
+		Timer.SetFixedTimeStep(true);
+		Timer.SetTargetElapsedSeconds(1.0 / 30.0);
 		
 		DivergenceEngine::Logger::Log(L"Application Constructed");
 	}
@@ -41,10 +45,14 @@ namespace DivergenceEngine
 
 	void Application::UpdateAndDrawAllWindows()
 	{
-		//Cycle through every window and draw them
-		for (std::unique_ptr<Window>& window : ListOfApplicationWindows)
-		{
-			window->UpdateAndDraw();
-		}
+		//Ensure the update and draw only happens at the target frame rate
+		Timer.Tick([&]()
+			{
+				//Cycle through every window and draw them
+				for (std::unique_ptr<Window>& window : ListOfApplicationWindows)
+				{
+					window->UpdateAndDraw(Timer);
+				}
+			});
 	}
 }

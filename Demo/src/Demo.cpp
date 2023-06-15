@@ -11,8 +11,8 @@ DivergenceEngine::Application* DivergenceEngine::CreateApplication(LPWSTR lpCmdL
 //Class functions----------------------------------------------------------------------------------
 Demo::Demo(LPWSTR lpCmdLine)
 {
-	processInstance = GetModuleHandle(nullptr);
-	commandLineArgs = lpCmdLine;
+	ProcessInstance = GetModuleHandle(nullptr);
+	CommandLineArgs = lpCmdLine;
 	DivergenceEngine::Logger::Log(L"Demo Constructed");
 }
 
