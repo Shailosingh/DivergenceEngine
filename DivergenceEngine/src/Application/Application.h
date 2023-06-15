@@ -17,10 +17,11 @@ namespace DivergenceEngine
 	protected:
 		HINSTANCE ProcessInstance = nullptr;
 		std::wstring CommandLineArgs = L"";
+		uint32_t FramesPerSecond = 60;
 		
 	public:
 		//Constructors and Destructors
-		Application();
+		Application(uint32_t frameRate);
 		virtual ~Application() = 0;
 
 		//Initialization functions

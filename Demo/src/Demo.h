@@ -5,7 +5,7 @@
 class Demo : public DivergenceEngine::Application
 {
 public:
-	Demo(LPWSTR lpCmdLine);
+	Demo(LPWSTR lpCmdLine, uint32_t frameRate);
 	~Demo() override;
 	
 	void Initialize() override;
