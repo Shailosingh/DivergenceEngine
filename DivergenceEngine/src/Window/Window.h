@@ -2,8 +2,10 @@
 #include <Windows.h>
 #include <cstdint>
 #include <string>
+#include <memory>
 #include "Keyboard.h"
 #include "Application/StepTimer.h"
+#include "Graphics/Graphics.h"
 
 namespace DivergenceEngine
 {
@@ -47,6 +49,7 @@ namespace DivergenceEngine
 		uint16_t InternalClientWidth;
 		uint16_t InternalClientHeight;
 		std::wstring WindowTitle;
+		std::unique_ptr<Graphics> GraphicsController;
 
 		//Overridable functions
 

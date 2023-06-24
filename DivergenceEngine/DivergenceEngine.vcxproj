@@ -88,18 +88,31 @@
     <ClInclude Include="src\Application\EntryPoint.h" />
     <ClInclude Include="src\Application\StepTimer.h" />
     <ClInclude Include="src\DivergenceEngine.h" />
+    <ClInclude Include="src\DXComErrorHandler.h" />
     <ClInclude Include="src\Globals.h" />
+    <ClInclude Include="src\Graphics\Graphics.h" />
     <ClInclude Include="src\Logger\Logger.h" />
     <ClInclude Include="src\Window\Keyboard.h" />
     <ClInclude Include="src\Window\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application\Application.cpp" />
+    <ClCompile Include="src\Graphics\Graphics.cpp" />
     <ClCompile Include="src\Logger\Logger.cpp" />
     <ClCompile Include="src\Window\Keyboard.cpp" />
     <ClCompile Include="src\Window\Window.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\directxtk_desktop_win10.2023.4.28.1\build\native\directxtk_desktop_win10.targets" Condition="Exists('..\packages\directxtk_desktop_win10.2023.4.28.1\build\native\directxtk_desktop_win10.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\directxtk_desktop_win10.2023.4.28.1\build\native\directxtk_desktop_win10.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\directxtk_desktop_win10.2023.4.28.1\build\native\directxtk_desktop_win10.targets'))" />
+  </Target>
 </Project>

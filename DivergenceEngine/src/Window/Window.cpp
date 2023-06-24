@@ -2,6 +2,7 @@
 #include "Logger/Logger.h"
 #include <Windows.h>
 #include <format>
+#include "Application/Application.h"
 
 namespace DivergenceEngine
 {
@@ -45,14 +46,12 @@ namespace DivergenceEngine
 	}
 	
 	//Window Implementation------------------------------------------------------------------------
-	Window::Window(uint16_t clientWidth, uint16_t clientHeight, const wchar_t* windowTitle, SignalWindowDestructionFunction signalFunction)
-	{
-		//Initialize Datafields
-		InternalClientWidth = clientWidth;
-		InternalClientHeight = clientHeight;
-		WindowTitle = windowTitle;
-		SignalFunction = signalFunction;
-		
+	Window::Window(uint16_t clientWidth, uint16_t clientHeight, const wchar_t* windowTitle, SignalWindowDestructionFunction signalFunction):
+		InternalClientWidth(clientWidth),
+		InternalClientHeight(clientHeight),
+		WindowTitle(windowTitle),
+		SignalFunction(signalFunction)
+	{	
 		//Create window rect from client size
 		DWORD windowStyle = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
 		RECT windowRect;
@@ -77,9 +76,16 @@ namespace DivergenceEngine
 			GetModuleHandle(nullptr),
 			this
 		);
+		if (WindowHandle == NULL)
+		{
+			throw std::exception("Failed to create window");
+		}
 
-		//Show window
+		//Display the window (it will be hidden until you do this)
 		ShowWindow(WindowHandle, SW_SHOWDEFAULT);
+
+		//Initialize the graphics controller
+		GraphicsController = std::make_unique<Graphics>(Application::GetFrameRate(), WindowHandle, clientWidth, clientHeight);
 		
 		Logger::Log(std::format(L"Window '{}' Constructed", WindowTitle));
 	}
@@ -220,7 +226,11 @@ namespace DivergenceEngine
 
 	void Window::RenderWindow()
 	{
-		//TODO
+		//TODO: Render contents of window
+		GraphicsController->ClearFrame(0.5f, 0.0f, 0.9f);
+
+		//Present frame
+		GraphicsController->Present();
 	}
 	
 	void Window::UpdateAndDraw(const DX::StepTimer& timer)

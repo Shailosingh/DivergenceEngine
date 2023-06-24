@@ -3,24 +3,28 @@
 
 namespace DivergenceEngine
 {
-	Application::Application(uint32_t frameRate)
+	Application::Application(uint32_t frameRate, LPWSTR lpCmdLine):
+		CommandLineArgs(lpCmdLine)
 	{
 		//This is a game engine. A game will probably have 5 windows max. Reserve enough memory for that and if there is more, there will be reallocation
 		ListOfApplicationWindows.reserve(5);
 
+		//Set the initial data for the Window
+		ProcessInstance = GetModuleHandle(nullptr);
+
 		//Take in the input fps and if it is 0, set it to 60
 		if (frameRate == 0)
 		{
-			FramesPerSecond = 60;
+			FrameRate = 60;
 		}
 		else
 		{
-			FramesPerSecond = frameRate;
+			FrameRate = frameRate;
 		}
 
 		//By default, set the timer to 60 fps
 		Timer.SetFixedTimeStep(true);
-		Timer.SetTargetElapsedSeconds(1.0 / (double)FramesPerSecond);
+		Timer.SetTargetElapsedSeconds(1.0 / (double)FrameRate);
 		
 		DivergenceEngine::Logger::Log(L"Application Constructed");
 	}
@@ -29,6 +33,11 @@ namespace DivergenceEngine
 	{
 		DivergenceEngine::Logger::Log(L"Application Destructed");
 	
+	}
+
+	uint32_t Application::GetFrameRate()
+	{
+		return FrameRate;
 	}
 
 	void Application::AddWindow(std::unique_ptr<Window>&& window)
