@@ -1,7 +1,7 @@
 #include "TypableTitleWindow.h"
 
-TypableTitleWindow::TypableTitleWindow(uint16_t clientWidth, uint16_t clientHeight, const wchar_t* windowTitle, DivergenceEngine::SignalWindowDestructionFunction signalFunction)
-	:Window(clientWidth, clientHeight, windowTitle, signalFunction)
+TypableTitleWindow::TypableTitleWindow(uint16_t clientWidth, uint16_t clientHeight, const wchar_t* windowTitle)
+	:Window(clientWidth, clientHeight, windowTitle)
 {
 	DivergenceEngine::Logger::Log(L"TypableTitleWindow constructed");
 }

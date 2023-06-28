@@ -46,11 +46,10 @@ namespace DivergenceEngine
 	}
 	
 	//Window Implementation------------------------------------------------------------------------
-	Window::Window(uint16_t clientWidth, uint16_t clientHeight, const wchar_t* windowTitle, SignalWindowDestructionFunction signalFunction):
+	Window::Window(uint16_t clientWidth, uint16_t clientHeight, const wchar_t* windowTitle):
 		InternalClientWidth(clientWidth),
 		InternalClientHeight(clientHeight),
-		WindowTitle(windowTitle),
-		SignalFunction(signalFunction)
+		WindowTitle(windowTitle)
 	{	
 		//Create window rect from client size
 		DWORD windowStyle = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
@@ -109,7 +108,6 @@ namespace DivergenceEngine
 		InternalClientWidth = otherWindow.InternalClientWidth;
 		InternalClientHeight = otherWindow.InternalClientHeight;
 		WindowTitle = otherWindow.WindowTitle;
-		SignalFunction = otherWindow.SignalFunction;
 		
 		//Invalidate the otherWindow's handle
 		otherWindow.WindowHandle = nullptr;
@@ -136,7 +134,6 @@ namespace DivergenceEngine
 			InternalClientWidth = otherWindow.InternalClientWidth;
 			InternalClientHeight = otherWindow.InternalClientHeight;
 			WindowTitle = otherWindow.WindowTitle;
-			SignalFunction = otherWindow.SignalFunction;
 
 			//Invalidate the otherWindow's handle
 			otherWindow.WindowHandle = nullptr;
@@ -193,7 +190,7 @@ namespace DivergenceEngine
 		case WM_CLOSE:
 			if (OnWindowDestructionRequest())
 			{
-				SignalFunction(hWnd);
+				Application::RemoveWindow(hWnd);
 			}
 			return 0;
 			break;

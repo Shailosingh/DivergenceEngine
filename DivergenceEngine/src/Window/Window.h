@@ -9,9 +9,6 @@
 
 namespace DivergenceEngine
 {
-	//Function pointer definitions
-	typedef void(*SignalWindowDestructionFunction)(HWND);
-
 	class Window
 	{
 	private:
@@ -32,9 +29,6 @@ namespace DivergenceEngine
 		public:
 			static const wchar_t* GetName();
 		};
-		
-		//Private datafields
-		SignalWindowDestructionFunction SignalFunction;
 
 		//WinProc Functions
 		static LRESULT CALLBACK HandleMessageSetup(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -66,7 +60,7 @@ namespace DivergenceEngine
 		virtual void UpdateWindow(const DX::StepTimer& timer) = 0;
 
 	public:
-		Window(uint16_t clientWidth, uint16_t clientHeight, const wchar_t* windowTitle, SignalWindowDestructionFunction signalFunction);
+		Window(uint16_t clientWidth, uint16_t clientHeight, const wchar_t* windowTitle);
 		~Window();
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
