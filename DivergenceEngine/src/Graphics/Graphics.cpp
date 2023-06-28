@@ -25,10 +25,10 @@ namespace DivergenceEngine
 		swapChainDescription.SampleDesc.Count = 1;
 		swapChainDescription.SampleDesc.Quality = 0;
 		swapChainDescription.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		swapChainDescription.BufferCount = 1;
+		swapChainDescription.BufferCount = 2;
 		swapChainDescription.OutputWindow = windowHandle;
 		swapChainDescription.Windowed = TRUE;
-		swapChainDescription.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+		swapChainDescription.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 		swapChainDescription.Flags = 0;
 
 		//Check if debug mode

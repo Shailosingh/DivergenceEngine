@@ -23,8 +23,8 @@ Demo::~Demo()
 void Demo::Initialize()
 {
 	AddWindow(std::make_unique<TypableTitleWindow>(800, 450, L"Window 1"));
-	AddWindow(std::make_unique<TypableTitleWindow>(450, 800, L"Window 2"));
-	AddWindow(std::make_unique<TypableTitleWindow>(800, 800, L"Window 3"));
+	//AddWindow(std::make_unique<TypableTitleWindow>(450, 800, L"Window 2"));
+	//AddWindow(std::make_unique<TypableTitleWindow>(800, 800, L"Window 3"));
 
 	DivergenceEngine::Logger::Log(L"Demo Initialized");
 }
