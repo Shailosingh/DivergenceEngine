@@ -3,13 +3,13 @@
 TypableTitleWindow::TypableTitleWindow(uint16_t clientWidth, uint16_t clientHeight, const wchar_t* windowTitle)
 	:Window(clientWidth, clientHeight, windowTitle)
 {
+	//Load image on foreground
+	std::shared_ptr<DivergenceEngine::Templates::Image> menuImage = std::make_shared<DivergenceEngine::Templates::Image>(L"Images\\Bison.png", GraphicsController, DirectX::SimpleMath::Vector2(350, 200), DirectX::SimpleMath::Vector2(300, 207));
+	this->AddDrawableComponent(menuImage, 1);
+	
 	//Load image on background layer
 	std::shared_ptr<DivergenceEngine::Templates::Image> backgroundImage = std::make_shared<DivergenceEngine::Templates::Image>(L"Images\\Plains.jpg", GraphicsController, DirectX::SimpleMath::Vector2(0, 0));
 	this->AddDrawableComponent(backgroundImage, 0);
-
-	//Load image on foreground
-	std::shared_ptr<DivergenceEngine::Templates::Image> menuImage = std::make_shared<DivergenceEngine::Templates::Image>(L"Images\\Bison.png", GraphicsController, DirectX::SimpleMath::Vector2(350, 200), DirectX::SimpleMath::Vector2(300, 207));
-	this->AddDrawableComponent(menuImage, 0);
 	
 	DivergenceEngine::Logger::Log(L"TypableTitleWindow constructed");
 	
