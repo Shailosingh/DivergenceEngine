@@ -82,9 +82,12 @@ namespace DivergenceEngine
 
 		//Display the window (it will be hidden until you do this)
 		ShowWindow(WindowHandle, SW_SHOWDEFAULT);
-
+		
 		//Initialize the graphics controller
-		GraphicsController = std::make_unique<Graphics>(Application::GetFrameRate(), WindowHandle, clientWidth, clientHeight);
+		GraphicsController = std::make_shared<Graphics>(Application::GetFrameRate(), WindowHandle, clientWidth, clientHeight);
+
+		//Initialize size for three layers of drawables
+		LayersOfDrawableComponents.reserve(3);
 		
 		Logger::Log(std::format(L"Window '{}' Constructed", WindowTitle));
 	}
@@ -223,9 +226,18 @@ namespace DivergenceEngine
 
 	void Window::RenderWindow()
 	{
-		//TODO: Render contents of window
+		//Clear the screen
 		GraphicsController->ClearFrame(0.5f, 0.0f, 0.9f);
 
+		//Cycle through the layers and render them
+		for (auto& layer : LayersOfDrawableComponents)
+		{
+			for (auto& component : layer)
+			{
+				component->Draw();
+			}
+		}
+		
 		//Present frame
 		GraphicsController->Present();
 	}
@@ -234,6 +246,57 @@ namespace DivergenceEngine
 	{
 		UpdateWindow(timer);
 		RenderWindow();
+	}
+
+	void Window::AddDrawableComponent(std::shared_ptr<IDrawable> drawableComponent, size_t layer)
+	{
+		//If the number of layers is less than the layer specified, resize the layer vector (NOTE: layer is a 0-based index)
+		if (LayersOfDrawableComponents.size() <= layer)
+		{
+			LayersOfDrawableComponents.resize(layer + 1);
+		}
+
+		//Add the drawable component to the specified layer
+		LayersOfDrawableComponents[layer].push_back(drawableComponent);
+		Logger::Log(std::format(L"Drawable added to layer {}", layer));
+	}
+
+	void Window::RemoveDrawableComponent(std::shared_ptr<IDrawable> drawableComponent, size_t layer)
+	{
+		//If the number of layers is less than the layer specified, the layer does not exist and the function can return, doing nothing
+		if (LayersOfDrawableComponents.size() <= layer)
+		{
+			return;
+		}
+
+		//Search within the specified layer for the drawable component and remove it from the layers
+		for (auto it = LayersOfDrawableComponents[layer].begin(); it != LayersOfDrawableComponents[layer].end(); ++it)
+		{
+			if (*it == drawableComponent)
+			{
+				LayersOfDrawableComponents[layer].erase(it);
+				Logger::Log(std::format(L"Drawable erased from layer {}", layer));
+				return;
+			}
+		}
+	}
+
+	void Window::ClearLayer(size_t layer)
+	{
+		//If the layer index is out of range, return
+		if (LayersOfDrawableComponents.size() <= layer)
+		{
+			return;
+		}
+
+		//Clear the layer
+		LayersOfDrawableComponents[layer].clear();
+	}
+
+	void Window::ClearAllLayers()
+	{
+		//Clear all layers
+		LayersOfDrawableComponents.clear();
 	}
 
 	//Overridable functions------------------------------------------------------------------------

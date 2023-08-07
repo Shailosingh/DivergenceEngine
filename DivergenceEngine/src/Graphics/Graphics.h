@@ -3,6 +3,10 @@
 #include <d3d11.h>
 #include <cstdint>
 #include <wrl.h>
+#include <SimpleMath.h>
+#include <string>
+#include <SpriteBatch.h> //TODO: Implement functions to use this
+#include <CommonStates.h>
 
 namespace DivergenceEngine
 {
@@ -18,7 +22,13 @@ namespace DivergenceEngine
 		Microsoft::WRL::ComPtr<IDXGISwapChain> SwapChainPointer;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> DeviceContextPointer;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> RenderTargetPointer;
+		std::unique_ptr<DirectX::SpriteBatch> SpriteBatchPointer;
+		std::unique_ptr<DirectX::CommonStates> SpriteBatchStatesPointer;
+		bool IsSpriteBatchDrawing = false;
 
+		//Helpers
+		void BeginSpriteBatch() noexcept;
+		void EndSpriteBatch() noexcept;
 		
 	public:
 		//Constructors and destructors
@@ -31,5 +41,13 @@ namespace DivergenceEngine
 		//Public functions
 		void Present();
 		void ClearFrame(float red, float green, float blue) noexcept;
+
+		//Sprite batch functions
+		void DrawFullSprite(ID3D11ShaderResourceView* texture, DirectX::SimpleMath::Vector2 position);
+		void DrawSizedSprite(ID3D11ShaderResourceView* texture, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 size);
+
+		//Texture loaders
+		void LoadTexture(std::wstring filePath, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& texture, CD3D11_TEXTURE2D_DESC&  textureDescription);
+		void LoadTexture(std::wstring filePath, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& texture);
 	};
 }

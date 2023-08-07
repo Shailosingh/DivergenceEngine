@@ -3,9 +3,11 @@
 #include <cstdint>
 #include <string>
 #include <memory>
+#include <list>
 #include "Keyboard.h"
 #include "Application/StepTimer.h"
 #include "Graphics/Graphics.h"
+#include "IDrawable.h"
 
 namespace DivergenceEngine
 {
@@ -35,6 +37,8 @@ namespace DivergenceEngine
 		static LRESULT CALLBACK HandleMessageThunk(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 		LRESULT HandleMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
+		//Rendering
+		std::vector<std::list<std::shared_ptr<IDrawable>>> LayersOfDrawableComponents;
 		void RenderWindow();
 
 	protected: 
@@ -43,7 +47,7 @@ namespace DivergenceEngine
 		uint16_t InternalClientWidth;
 		uint16_t InternalClientHeight;
 		std::wstring WindowTitle;
-		std::unique_ptr<Graphics> GraphicsController;
+		std::shared_ptr<Graphics> GraphicsController;
 
 		//Overridable functions
 
@@ -74,6 +78,12 @@ namespace DivergenceEngine
 
 		//Public functions
 		void UpdateAndDraw(const DX::StepTimer& timer);
+
+		//Rendering functions
+		void AddDrawableComponent(std::shared_ptr<IDrawable> drawableComponent, size_t layer);
+		void RemoveDrawableComponent(std::shared_ptr<IDrawable> drawableComponent, size_t layer);
+		void ClearLayer(size_t layer);
+		void ClearAllLayers();
 
 		//Helpers
 		bool IsEqualHandle(HWND windowHandle) const noexcept;

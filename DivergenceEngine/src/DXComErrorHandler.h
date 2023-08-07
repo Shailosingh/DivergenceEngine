@@ -2,6 +2,10 @@
 #include <Windows.h>
 #include <exception>
 #include <stdio.h>
+#include <comdef.h>
+#include <string>
+#include <format>
+#include "Logger/Logger.h"
 
 namespace DX
 {
@@ -27,6 +31,9 @@ namespace DX
     {
         if (FAILED(hr))
         {
+            _com_error error(hr);
+			std::wstring errorMessage = std::format(L"EXCEPTION: {}", error.ErrorMessage());
+            DivergenceEngine::Logger::Log(errorMessage);
             throw com_exception(hr);
         }
     }

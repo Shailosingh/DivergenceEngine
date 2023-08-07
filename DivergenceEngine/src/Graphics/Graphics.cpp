@@ -1,4 +1,5 @@
 #include "Graphics.h"
+#include <WICTextureLoader.h>
 #include "DXComErrorHandler.h"
 
 namespace wrl = Microsoft::WRL;
@@ -59,15 +60,38 @@ namespace DivergenceEngine
 		DX::ThrowIfFailed(hr);
 		
 		//Create render target
-		DevicePointer->CreateRenderTargetView(
+		hr = DevicePointer->CreateRenderTargetView(
 			backBufferPointer.Get(),
 			nullptr,
 			&RenderTargetPointer
 		);
+		DX::ThrowIfFailed(hr);
+
+		//Configure viewport
+		D3D11_VIEWPORT viewPort;
+		viewPort.Width = static_cast<float>(bufferWidth);
+		viewPort.Height = static_cast<float>(bufferHeight);
+		viewPort.MinDepth = 0.0f;
+		viewPort.MaxDepth = 1.0f;
+		viewPort.TopLeftX = 0.0f;
+		viewPort.TopLeftY = 0.0f;
+		DeviceContextPointer->RSSetViewports(1u, &viewPort);
+
+		//Create the SpriteBatch
+		SpriteBatchPointer = std::make_unique<DirectX::SpriteBatch>(DeviceContextPointer.Get());
+
+		//Create the common states
+		SpriteBatchStatesPointer = std::make_unique<DirectX::CommonStates>(DevicePointer.Get());
 	}
 
 	void Graphics::Present()
 	{
+		//Bind render target views
+		DeviceContextPointer->OMSetRenderTargets(1u, RenderTargetPointer.GetAddressOf(), nullptr);
+		
+		//End any active sprite batches
+		EndSpriteBatch();
+
 		HRESULT hr = SwapChainPointer->Present(1u, 0u);
 		DX::ThrowIfFailed(hr);
 
@@ -78,5 +102,65 @@ namespace DivergenceEngine
 	{
 		const float colour[] = { red, green, blue, 1.0f };
 		DeviceContextPointer->ClearRenderTargetView(RenderTargetPointer.Get(), colour);
+	}
+	
+	//Sprite batch functions-----------------------------------------------------------------------
+	void Graphics::DrawFullSprite(ID3D11ShaderResourceView* texture, DirectX::SimpleMath::Vector2 position)
+	{
+		BeginSpriteBatch();
+
+		SpriteBatchPointer->Draw(texture, position);
+	}
+
+	void Graphics::DrawSizedSprite(ID3D11ShaderResourceView* texture, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 size)
+	{
+		BeginSpriteBatch();
+		
+		RECT positionRectangle;
+		positionRectangle.left = static_cast<LONG>(position.x);
+		positionRectangle.right = static_cast<LONG>(position.x + size.x);
+		positionRectangle.top = static_cast<LONG>(position.y);
+		positionRectangle.bottom = static_cast<LONG>(position.y + size.y);
+		SpriteBatchPointer->Draw(texture, positionRectangle, nullptr, DirectX::Colors::White);
+	}
+
+	//Texture Loader-------------------------------------------------------------------------------
+	
+	//Designed for loading textures from files, when you need to know the size of the texture
+	void Graphics::LoadTexture(std::wstring filePath, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& texture, CD3D11_TEXTURE2D_DESC& textureDescription)
+	{
+		//Load the texture and its resource info from the file
+		wrl::ComPtr<ID3D11Resource> resource;
+		DX::ThrowIfFailed(DirectX::CreateWICTextureFromFile(DevicePointer.Get(), DeviceContextPointer.Get(), filePath.c_str(), &resource, &texture));
+
+		//Get the texture description from the resource info
+		wrl::ComPtr<ID3D11Texture2D> texture2D;
+		DX::ThrowIfFailed(resource.As(&texture2D));
+		texture2D->GetDesc(&textureDescription);
+	}
+
+	//For loading textures from files, when you won't need the default size of the texture and it will be defined by the programmer
+	void Graphics::LoadTexture(std::wstring filePath, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& texture)
+	{
+		DX::ThrowIfFailed(DirectX::CreateWICTextureFromFile(DevicePointer.Get(), filePath.c_str(), nullptr, &texture));
+	}
+
+	//Helpers--------------------------------------------------------------------------------------
+	void Graphics::BeginSpriteBatch() noexcept
+	{
+		if (!IsSpriteBatchDrawing)
+		{
+			SpriteBatchPointer->Begin(DirectX::SpriteSortMode_Deferred, SpriteBatchStatesPointer->NonPremultiplied());
+			IsSpriteBatchDrawing = true;
+		}
+	}
+
+	void Graphics::EndSpriteBatch() noexcept
+	{
+		if (IsSpriteBatchDrawing)
+		{
+			SpriteBatchPointer->End();
+			IsSpriteBatchDrawing = false;
+		}
 	}
 }

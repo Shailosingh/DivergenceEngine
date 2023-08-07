@@ -4,6 +4,7 @@
 class TypableTitleWindow : public DivergenceEngine::Window
 {	
 private:
+	//Private helpers
 	void UpdateWindowTitle(WPARAM characterCode);
 	
 	//Overridden functions
