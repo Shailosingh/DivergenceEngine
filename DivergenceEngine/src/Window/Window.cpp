@@ -52,20 +52,19 @@ namespace DivergenceEngine
 		WindowTitle(windowTitle)
 	{	
 		//Create window rect from client size
-		DWORD windowStyle = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
 		RECT windowRect;
 		windowRect.left = 0;
 		windowRect.right = clientWidth;
 		windowRect.top = 0;
 		windowRect.bottom = clientHeight;
-		AdjustWindowRect(&windowRect, windowStyle, FALSE);
+		AdjustWindowRect(&windowRect, WINDOWED_WINDOW_STYLE, FALSE);
 
 		//Create window
 		WindowHandle = CreateWindowEx(
 			0,
 			WindowClass::GetName(),
 			windowTitle,
-			windowStyle,
+			WINDOWED_WINDOW_STYLE,
 			CW_USEDEFAULT,
 			CW_USEDEFAULT,
 			windowRect.right - windowRect.left,
@@ -198,6 +197,13 @@ namespace DivergenceEngine
 			return 0;
 			break;
 
+		case WM_SIZE:
+			if (GraphicsController != nullptr)
+			{
+				GraphicsController->ResetRenderTargetAndViewport(LOWORD(lParam), HIWORD(lParam));
+			}
+			break;
+
 		case WM_KILLFOCUS:
 			KeyboardObject.ClearKeyStates();
 			break;
@@ -217,7 +223,7 @@ namespace DivergenceEngine
 			break;
 
 		case WM_CHAR:
-			KeyboardObject.OnChar(static_cast<uint8_t>(wParam));
+			KeyboardObject.OnChar(static_cast<wchar_t>(wParam));
 			break;
 		}
 
@@ -258,7 +264,6 @@ namespace DivergenceEngine
 
 		//Add the drawable component to the specified layer
 		LayersOfDrawableComponents[layer].push_back(drawableComponent);
-		Logger::Log(std::format(L"Drawable added to layer {}", layer));
 	}
 
 	void Window::RemoveDrawableComponent(std::shared_ptr<IDrawable> drawableComponent, size_t layer)
@@ -275,7 +280,6 @@ namespace DivergenceEngine
 			if (*it == drawableComponent)
 			{
 				LayersOfDrawableComponents[layer].erase(it);
-				Logger::Log(std::format(L"Drawable erased from layer {}", layer));
 				return;
 			}
 		}
@@ -320,5 +324,38 @@ namespace DivergenceEngine
 	{
 		WindowTitle = windowTitle;
 		SetWindowText(WindowHandle, WindowTitle.c_str());
+	}
+
+	void Window::ToggleFullscreen() noexcept
+	{
+		//Initialize variables
+		RECT windowRect;
+		
+		//Get the current window style
+		LONG_PTR windowStyle = GetWindowLongPtr(WindowHandle, GWL_STYLE);
+
+		//If the window is currently fullscreen, set the window back to windowed
+		if (IsFullscreen)
+		{
+			SetWindowLongPtr(WindowHandle, GWL_STYLE, WINDOWED_WINDOW_STYLE);
+
+			//Update styles and size
+			SetWindowPos(WindowHandle, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER);
+			GraphicsController->ResizeWindow(InternalClientWidth, InternalClientHeight);
+			ShowWindow(WindowHandle, SW_NORMAL);
+		}
+
+		//If the window is currently windowed, set it to fullscreen
+		else
+		{
+			SetWindowLongPtr(WindowHandle, GWL_STYLE, FULLSCREEN_WINDOW_STYLE);
+			
+			//Update styles and size
+			SetWindowPos(WindowHandle, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+			ShowWindow(WindowHandle, SW_SHOWMAXIMIZED);
+		}
+		
+		//Update fullscreen flag
+		IsFullscreen = !IsFullscreen;
 	}
 }

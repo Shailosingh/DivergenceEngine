@@ -42,6 +42,10 @@ namespace DivergenceEngine
 		void Present();
 		void ClearFrame(float red, float green, float blue) noexcept;
 
+		//Maintenance functions
+		void ResetRenderTargetAndViewport(uint16_t clientWidth, uint16_t clientHeight);
+		void ResizeWindow(uint16_t clientWidth, uint16_t clientHeight);
+
 		//Sprite batch functions
 		void DrawFullSprite(ID3D11ShaderResourceView* texture, DirectX::SimpleMath::Vector2 position);
 		void DrawSizedSprite(ID3D11ShaderResourceView* texture, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 size);

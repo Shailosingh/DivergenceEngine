@@ -4,8 +4,8 @@ TypableTitleWindow::TypableTitleWindow(uint16_t clientWidth, uint16_t clientHeig
 	:Window(clientWidth, clientHeight, windowTitle)
 {
 	//Load image on foreground
-	std::shared_ptr<DivergenceEngine::Templates::Image> menuImage = std::make_shared<DivergenceEngine::Templates::Image>(L"Images\\Bison.png", GraphicsController, DirectX::SimpleMath::Vector2(350, 200), DirectX::SimpleMath::Vector2(300, 207));
-	this->AddDrawableComponent(menuImage, 1);
+	std::shared_ptr<DivergenceEngine::Templates::Image> bisonImage = std::make_shared<DivergenceEngine::Templates::Image>(L"Images\\Bison.png", GraphicsController, DirectX::SimpleMath::Vector2(350, 200), DirectX::SimpleMath::Vector2(300, 207));
+	this->AddDrawableComponent(bisonImage, 1);
 	
 	//Load image on background layer
 	std::shared_ptr<DivergenceEngine::Templates::Image> backgroundImage = std::make_shared<DivergenceEngine::Templates::Image>(L"Images\\Plains.jpg", GraphicsController, DirectX::SimpleMath::Vector2(0, 0));
@@ -25,7 +25,26 @@ void TypableTitleWindow::UpdateWindow(const DX::StepTimer& timer)
 	//Handle the char queue
 	while (!KeyboardObject.CharQueueIsEmpty())
 	{
-		UpdateWindowTitle(*KeyboardObject.ReadChar());
+		//Read the character
+		wchar_t typedChar = *KeyboardObject.ReadChar();
+
+		switch (typedChar)
+		{
+		//Escape Key
+		case VK_ESCAPE:
+			PostMessage(WindowHandle, WM_CLOSE, 0, 0);
+			break;
+
+		//Enter key
+		case VK_RETURN:
+			ToggleFullscreen();
+			break;
+
+		//Typable char
+		default:
+			UpdateWindowTitle(typedChar);
+			break;
+		}
 	}
 
 	//Handle the key queue
@@ -37,11 +56,13 @@ void TypableTitleWindow::UpdateWindow(const DX::StepTimer& timer)
 		//If the key is pressed
 		if (currentEvent.IsPress())
 		{
+			/*
 			//If the key is escape, send WM_CLOSE
 			if (currentEvent.GetCode() == VK_ESCAPE)
 			{
 				PostMessage(WindowHandle, WM_CLOSE, 0, 0);
 			}
+			*/
 		}
 	}
 }

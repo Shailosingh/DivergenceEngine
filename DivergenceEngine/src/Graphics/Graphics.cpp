@@ -103,6 +103,55 @@ namespace DivergenceEngine
 		const float colour[] = { red, green, blue, 1.0f };
 		DeviceContextPointer->ClearRenderTargetView(RenderTargetPointer.Get(), colour);
 	}
+
+	void Graphics::ResetRenderTargetAndViewport(uint16_t clientWidth, uint16_t clientHeight)
+	{
+		//Unbind the current render target and release references
+		DeviceContextPointer->OMSetRenderTargets(0, 0, 0);
+		RenderTargetPointer.Reset();
+
+		//Flush all remaining commands on device context
+		//DeviceContextPointer->Flush();
+		
+		//Get texture resource from swap chain (back buffer)
+		wrl::ComPtr<ID3D11Texture2D> backBufferPointer;
+		HRESULT hr = SwapChainPointer->GetBuffer(0, _uuidof(ID3D11Texture2D), &backBufferPointer);
+		DX::ThrowIfFailed(hr);
+
+		//Create render target
+		hr = DevicePointer->CreateRenderTargetView(
+			backBufferPointer.Get(),
+			nullptr,
+			&RenderTargetPointer
+		);
+		DX::ThrowIfFailed(hr);
+
+		//Configure viewport
+		D3D11_VIEWPORT viewPort;
+		viewPort.Width = static_cast<float>(clientWidth);
+		viewPort.Height = static_cast<float>(clientHeight);
+		viewPort.MinDepth = 0.0f;
+		viewPort.MaxDepth = 1.0f;
+		viewPort.TopLeftX = 0.0f;
+		viewPort.TopLeftY = 0.0f;
+		DeviceContextPointer->RSSetViewports(1u, &viewPort);
+	}
+
+	void Graphics::ResizeWindow(uint16_t clientWidth, uint16_t clientHeight)
+	{
+		DXGI_MODE_DESC displayDescription = {};
+		displayDescription.Width = clientWidth;
+		displayDescription.Height = clientHeight;
+		displayDescription.RefreshRate.Numerator = 0;
+		displayDescription.RefreshRate.Denominator = 0;
+		displayDescription.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		displayDescription.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+		displayDescription.Scaling = DXGI_MODE_SCALING_STRETCHED;
+		
+		//Resize the swap chain
+		HRESULT hr = SwapChainPointer->ResizeTarget(&displayDescription);
+		DX::ThrowIfFailed(hr);
+	}
 	
 	//Sprite batch functions-----------------------------------------------------------------------
 	void Graphics::DrawFullSprite(ID3D11ShaderResourceView* texture, DirectX::SimpleMath::Vector2 position)

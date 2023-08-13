@@ -32,6 +32,10 @@ namespace DivergenceEngine
 			static const wchar_t* GetName();
 		};
 
+		//Constants
+		const DWORD WINDOWED_WINDOW_STYLE = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
+		const DWORD FULLSCREEN_WINDOW_STYLE = WS_POPUP;
+
 		//WinProc Functions
 		static LRESULT CALLBACK HandleMessageSetup(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 		static LRESULT CALLBACK HandleMessageThunk(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -48,6 +52,7 @@ namespace DivergenceEngine
 		uint16_t InternalClientHeight;
 		std::wstring WindowTitle;
 		std::shared_ptr<Graphics> GraphicsController;
+		bool IsFullscreen = false;
 
 		//Overridable functions
 
@@ -89,5 +94,6 @@ namespace DivergenceEngine
 		bool IsEqualHandle(HWND windowHandle) const noexcept;
 		std::wstring GetWindowTitle()const noexcept;
 		void SetWindowTitle(const std::wstring& windowTitle) noexcept;
+		void ToggleFullscreen() noexcept;
 	};
 }
