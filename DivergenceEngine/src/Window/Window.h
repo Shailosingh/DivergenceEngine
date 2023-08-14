@@ -70,8 +70,8 @@ namespace DivergenceEngine
 		std::shared_ptr<Graphics> GraphicsController;
 
 		//Move constructor
-		Window(Window&& otherWindow) noexcept;
-		Window& operator=(Window&& otherWindow) noexcept;
+		Window(Window&& otherWindow) = delete;
+		Window& operator=(Window&& otherWindow) = delete;
 
 		//Public functions
 		void UpdateAndDraw(const DX::StepTimer& timer);

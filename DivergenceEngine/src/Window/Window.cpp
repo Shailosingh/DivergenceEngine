@@ -107,52 +107,6 @@ namespace DivergenceEngine
 		Logger::Log(std::format(L"Window '{}' Destructed", WindowTitle));
 	}
 
-	Window::Window(Window&& otherWindow) noexcept
-	{
-		//Copy otherWindow's datafields
-		WindowHandle = otherWindow.WindowHandle;
-		InternalClientWidth = otherWindow.InternalClientWidth;
-		InternalClientHeight = otherWindow.InternalClientHeight;
-		WindowTitle = otherWindow.WindowTitle;
-		
-		//Invalidate the otherWindow's handle
-		otherWindow.WindowHandle = nullptr;
-
-		//Set the new address of the window object
-		SetWindowLongPtr(WindowHandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-		
-		Logger::Log(std::format(L"Window '{}' Moved, via move constructor", WindowTitle));
-	}
-
-	Window& Window::operator=(Window&& otherWindow) noexcept
-	{
-		if (this->WindowHandle != otherWindow.WindowHandle)
-		{
-			//Destroy "this" window if it isn't null
-			if (this->WindowHandle != nullptr)
-			{
-				DestroyWindow(WindowHandle);
-				Logger::Log(std::format(L"Window '{}' Destructed", WindowTitle));
-			}
-			
-			//Copy otherWindow's datafields
-			WindowHandle = otherWindow.WindowHandle;
-			InternalClientWidth = otherWindow.InternalClientWidth;
-			InternalClientHeight = otherWindow.InternalClientHeight;
-			WindowTitle = otherWindow.WindowTitle;
-
-			//Invalidate the otherWindow's handle
-			otherWindow.WindowHandle = nullptr;
-
-			//Set the new address of the window object
-			SetWindowLongPtr(WindowHandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-			
-			Logger::Log(std::format(L"Window '{}' Moved, via move assignment operator", WindowTitle));
-		}
-		
-		return *this;
-	}
-
 	LRESULT Window::HandleMessageSetup(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		//Gets the first parameter of the Window when it is created
