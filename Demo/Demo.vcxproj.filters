@@ -18,7 +18,7 @@
     <ClCompile Include="src\Demo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\TypableTitleWindow.cpp">
+    <ClCompile Include="src\TypableTitlePage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -26,7 +26,7 @@
     <ClInclude Include="src\Demo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\TypableTitleWindow.h">
+    <ClInclude Include="src\TypableTitlePage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

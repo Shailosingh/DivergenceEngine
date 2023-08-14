@@ -95,6 +95,7 @@
     <ClInclude Include="src\Templates\Templates.h" />
     <ClInclude Include="src\Window\IDrawable.h" />
     <ClInclude Include="src\Logger\Logger.h" />
+    <ClInclude Include="src\Window\IPage.h" />
     <ClInclude Include="src\Window\Keyboard.h" />
     <ClInclude Include="src\Window\Mouse.h" />
     <ClInclude Include="src\Window\Window.h" />

@@ -1,6 +1,6 @@
 #include "Demo.h"
 #include <format>
-#include "TypableTitleWindow.h"
+#include "TypableTitlePage.h"
 
 //Sends the Application object to the Engine
 DivergenceEngine::Application* DivergenceEngine::CreateApplication(LPWSTR lpCmdLine)
@@ -22,9 +22,7 @@ Demo::~Demo()
 
 void Demo::Initialize()
 {
-	AddWindow(std::make_unique<TypableTitleWindow>(800, 450, L"Window 1"));
-	//AddWindow(std::make_unique<TypableTitleWindow>(450, 800, L"Window 2"));
-	//AddWindow(std::make_unique<TypableTitleWindow>(800, 800, L"Window 3"));
+	AddWindow(std::make_unique<DivergenceEngine::Window>(800, 450, L"Window 1", std::make_unique<TypableTitlePage>()));
 
 	DivergenceEngine::Logger::Log(L"Demo Initialized");
 }

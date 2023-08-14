@@ -46,10 +46,11 @@ namespace DivergenceEngine
 	}
 	
 	//Window Implementation------------------------------------------------------------------------
-	Window::Window(uint16_t clientWidth, uint16_t clientHeight, const wchar_t* windowTitle):
+	Window::Window(uint16_t clientWidth, uint16_t clientHeight, const wchar_t* windowTitle, std::unique_ptr<IPage>&& page) :
 		InternalClientWidth(clientWidth),
 		InternalClientHeight(clientHeight),
-		WindowTitle(windowTitle)
+		WindowTitle(windowTitle),
+		PageReference(std::move(page))
 	{	
 		//Create window rect from client size
 		RECT windowRect;
@@ -84,6 +85,9 @@ namespace DivergenceEngine
 		
 		//Initialize the graphics controller
 		GraphicsController = std::make_shared<Graphics>(Application::GetFrameRate(), WindowHandle, clientWidth, clientHeight);
+
+		//Initialize the page, with the window pointer
+		PageReference->Initialize(this);
 
 		//Initialize size for three layers of drawables
 		LayersOfDrawableComponents.reserve(3);
@@ -303,16 +307,26 @@ namespace DivergenceEngine
 		LayersOfDrawableComponents.clear();
 	}
 
-	//Overridable functions------------------------------------------------------------------------
+	//Page implemented functions-------------------------------------------------------------------
 	bool Window::OnWindowDestructionRequest()
 	{
-		return true;
+		return PageReference->OnWindowDestructionRequest();
+	}
+
+	void Window::UpdateWindow(const DX::StepTimer& timer)
+	{
+		PageReference->UpdateWindow(timer);
 	}
 	
 	//Helpers--------------------------------------------------------------------------------------
 	bool Window::IsEqualHandle(HWND windowHandle) const noexcept
 	{
 		return WindowHandle == windowHandle;
+	}
+	
+	HWND Window::GetHandle() const noexcept
+	{
+		return WindowHandle;
 	}
 	
 	std::wstring Window::GetWindowTitle() const noexcept
@@ -327,10 +341,7 @@ namespace DivergenceEngine
 	}
 
 	void Window::ToggleFullscreen() noexcept
-	{
-		//Initialize variables
-		RECT windowRect;
-		
+	{	
 		//Get the current window style
 		LONG_PTR windowStyle = GetWindowLongPtr(WindowHandle, GWL_STYLE);
 
@@ -357,5 +368,10 @@ namespace DivergenceEngine
 		
 		//Update fullscreen flag
 		IsFullscreen = !IsFullscreen;
+	}
+
+	void Window::SetPage(std::unique_ptr<IPage>&& newPage) noexcept
+	{
+		PageReference = std::move(newPage);
 	}
 }

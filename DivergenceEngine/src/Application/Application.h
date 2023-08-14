@@ -5,6 +5,8 @@
 #include <memory>
 #include "Window/Window.h"
 #include "StepTimer.h"
+#include "Window/IPage.h"
+
 
 namespace DivergenceEngine
 {
