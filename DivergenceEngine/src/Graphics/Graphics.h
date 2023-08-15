@@ -53,5 +53,8 @@ namespace DivergenceEngine
 		//Texture loaders
 		void LoadTexture(std::wstring filePath, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& texture, CD3D11_TEXTURE2D_DESC&  textureDescription);
 		void LoadTexture(std::wstring filePath, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& texture);
+
+		//Getters
+		DirectX::XMINT2 GetBufferSize() const noexcept;
 	};
 }

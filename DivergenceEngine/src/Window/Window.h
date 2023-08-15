@@ -35,8 +35,8 @@ namespace DivergenceEngine
 
 		//Private datafields
 		HWND WindowHandle;
-		uint16_t InternalClientWidth;
-		uint16_t InternalClientHeight;
+		uint16_t ClientWidth;
+		uint16_t ClientHeight;
 		std::wstring WindowTitle;
 		bool IsFullscreen = false;
 

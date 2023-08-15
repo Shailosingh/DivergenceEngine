@@ -47,8 +47,8 @@ namespace DivergenceEngine
 	
 	//Window Implementation------------------------------------------------------------------------
 	Window::Window(uint16_t clientWidth, uint16_t clientHeight, const wchar_t* windowTitle, std::unique_ptr<IPage>&& page) :
-		InternalClientWidth(clientWidth),
-		InternalClientHeight(clientHeight),
+		ClientWidth(clientWidth),
+		ClientHeight(clientHeight),
 		WindowTitle(windowTitle),
 		PageReference(std::move(page))
 	{	
@@ -156,9 +156,13 @@ namespace DivergenceEngine
 			break;
 
 		case WM_SIZE:
+			//Set the new client size
+			ClientWidth = LOWORD(lParam);
+			ClientHeight = HIWORD(lParam);
+			
 			if (GraphicsController != nullptr)
 			{
-				GraphicsController->ResetRenderTargetAndViewport(LOWORD(lParam), HIWORD(lParam));
+				GraphicsController->ResetRenderTargetAndViewport(ClientWidth, ClientHeight);
 			}
 			break;
 
@@ -296,6 +300,9 @@ namespace DivergenceEngine
 
 	void Window::ToggleFullscreen() noexcept
 	{	
+		//Get the buffer size
+		DirectX::XMINT2 bufferSize = GraphicsController->GetBufferSize();
+
 		//Get the current window style
 		LONG_PTR windowStyle = GetWindowLongPtr(WindowHandle, GWL_STYLE);
 
@@ -306,7 +313,7 @@ namespace DivergenceEngine
 
 			//Update styles and size
 			SetWindowPos(WindowHandle, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER);
-			GraphicsController->ResizeWindow(InternalClientWidth, InternalClientHeight);
+			GraphicsController->ResizeWindow(bufferSize.x, bufferSize.y);
 			ShowWindow(WindowHandle, SW_NORMAL);
 		}
 

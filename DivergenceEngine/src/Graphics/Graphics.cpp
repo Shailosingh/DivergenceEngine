@@ -212,4 +212,10 @@ namespace DivergenceEngine
 			IsSpriteBatchDrawing = false;
 		}
 	}
+
+	//Getters--------------------------------------------------------------------------------------
+	DirectX::XMINT2 Graphics::GetBufferSize() const noexcept
+	{
+		return DirectX::XMINT2(BufferWidth, BufferHeight);
+	}
 }
