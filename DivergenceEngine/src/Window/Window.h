@@ -5,6 +5,7 @@
 #include <memory>
 #include <list>
 #include "Keyboard.h"
+#include "Mouse.h"
 #include "Application/StepTimer.h"
 #include "Graphics/Graphics.h"
 #include "IDrawable.h"
@@ -67,6 +68,7 @@ namespace DivergenceEngine
 
 		//Datafields
 		Keyboard KeyboardObject;
+		Mouse MouseObject;
 		std::shared_ptr<Graphics> GraphicsController;
 
 		//Move constructor

@@ -106,6 +106,7 @@
     <ClCompile Include="src\Logger\Logger.cpp" />
     <ClCompile Include="src\Templates\Image.cpp" />
     <ClCompile Include="src\Window\Keyboard.cpp" />
+    <ClCompile Include="src\Window\Mouse.cpp" />
     <ClCompile Include="src\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>

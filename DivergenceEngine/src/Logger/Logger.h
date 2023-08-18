@@ -8,6 +8,7 @@ namespace DivergenceEngine
 	{
 	public:
 		static void Log(std::wstring message, std::source_location location = std::source_location::current());
+		static void RawLog(std::wstring message);
 
 	private:
 		static std::wstring ConvertNarrowStringToWideString(const std::string& narrowString);

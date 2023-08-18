@@ -21,6 +21,12 @@ namespace DivergenceEngine
 		OutputDebugString(output.c_str());
 	}
 
+	void Logger::RawLog(std::wstring message)
+	{
+		message += '\n';
+		OutputDebugString(message.c_str());
+	}
+
 	std::wstring Logger::ConvertNarrowStringToWideString(const std::string& narrowString)
 	{
 		//This method only works with single byte strings. Not UTF-8 strings with multibyte chars

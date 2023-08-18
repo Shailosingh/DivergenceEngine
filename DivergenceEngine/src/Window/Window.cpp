@@ -147,6 +147,7 @@ namespace DivergenceEngine
 		
 		switch (uMsg)
 		{
+		//General----------------------------------------------------------------------------------
 		case WM_CLOSE:
 			if (OnWindowDestructionRequest())
 			{
@@ -170,6 +171,7 @@ namespace DivergenceEngine
 			KeyboardObject.ClearKeyStates();
 			break;
 
+		//Keyboard---------------------------------------------------------------------------------
 		case WM_KEYDOWN:
 		case WM_SYSKEYDOWN:
 			keyPreviouslyPressed = lParam & ((LPARAM)1 << 30);
@@ -186,6 +188,50 @@ namespace DivergenceEngine
 
 		case WM_CHAR:
 			KeyboardObject.OnChar(static_cast<wchar_t>(wParam));
+			break;
+
+		//Mouse------------------------------------------------------------------------------------
+		case WM_MOUSEMOVE: //Braces are needed because of the variable declaration
+		{
+			POINTS mousePosition = MAKEPOINTS(lParam);
+
+			//Scale the mousePosition to the internal graphics buffer, to make collision of mouse to objects easier
+			DirectX::XMINT2 bufferSize = GraphicsController->GetBufferSize();
+			double xScaleRatio = static_cast<double>(bufferSize.x) / static_cast<double>(ClientWidth);
+			double yScaleRatio = static_cast<double>(bufferSize.y) / static_cast<double>(ClientHeight);
+			mousePosition.x = static_cast<short>(mousePosition.x * xScaleRatio);
+			mousePosition.y = static_cast<short>(mousePosition.y * yScaleRatio);
+
+			MouseObject.OnMouseMove(mousePosition.x, mousePosition.y);
+			break;
+		}
+
+		case WM_MOUSEWHEEL:
+			MouseObject.OnWheelScroll(GET_WHEEL_DELTA_WPARAM(wParam));
+			break;
+
+		case WM_LBUTTONDOWN:
+			MouseObject.OnLeftPressed();
+			break;
+
+		case WM_LBUTTONUP:
+			MouseObject.OnLeftReleased();
+			break;
+
+		case WM_RBUTTONDOWN:
+			MouseObject.OnRightPressed();
+			break;
+			
+		case WM_RBUTTONUP:
+			MouseObject.OnRightReleased();
+			break;
+
+		case WM_MBUTTONDOWN:
+			MouseObject.OnMiddlePressed();
+			break;
+			
+		case WM_MBUTTONUP:
+			MouseObject.OnMiddleReleased();
 			break;
 		}
 

@@ -61,6 +61,25 @@ void TypableTitlePage::UpdateWindow(const DX::StepTimer& timer)
 			
 		}
 	}
+
+	//Handle the mouse queue
+	while (!WindowReference->MouseObject.IsQueueEmpty())
+	{
+		//Get the mouse event
+		DivergenceEngine::Mouse::Event currentEvent = *WindowReference->MouseObject.GetNextMouseEvent();
+
+		//If the mouse scrolls, log how much ticks scroll
+		if (currentEvent.GetType() == DivergenceEngine::Mouse::Event::Type::WheelScroll)
+		{
+			DivergenceEngine::Logger::RawLog(L"Mouse scrolled " + std::to_wstring(currentEvent.GetScrollTicks()) + L" ticks");
+		}
+
+		//If the mouse moves, log the new position
+		else if (currentEvent.GetType() == DivergenceEngine::Mouse::Event::Type::Move)
+		{
+			DivergenceEngine::Logger::RawLog(L"Mouse moved to (" + std::to_wstring(currentEvent.GetPosX()) + L", " + std::to_wstring(currentEvent.GetPosY()) + L")");
+		}
+	}
 }
 
 bool TypableTitlePage::OnWindowDestructionRequest()
