@@ -89,6 +89,7 @@
     <ClInclude Include="src\Application\StepTimer.h" />
     <ClInclude Include="src\DivergenceEngine.h" />
     <ClInclude Include="src\DXComErrorHandler.h" />
+    <ClInclude Include="src\Fonts\Fonts.h" />
     <ClInclude Include="src\Globals.h" />
     <ClInclude Include="src\Graphics\Graphics.h" />
     <ClInclude Include="src\Templates\Image.h" />
@@ -102,6 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application\Application.cpp" />
+    <ClCompile Include="src\DXComErrorHandler.cpp" />
     <ClCompile Include="src\Graphics\Graphics.cpp" />
     <ClCompile Include="src\Logger\Logger.cpp" />
     <ClCompile Include="src\Templates\Image.cpp" />

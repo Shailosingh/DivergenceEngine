@@ -1,4 +1,5 @@
 #include "TypableTitlePage.h"
+#include <format>
 
 void TypableTitlePage::Initialize(DivergenceEngine::Window* windowReference)
 {
@@ -58,7 +59,12 @@ void TypableTitlePage::UpdateWindow(const DX::StepTimer& timer)
 		//If the key is pressed
 		if (currentEvent.IsPress())
 		{
-			
+			DivergenceEngine::Logger::RawLog(std::format(L"Pressed Key Code: {:#02x}", currentEvent.GetCode()));
+		}
+
+		else
+		{
+			DivergenceEngine::Logger::RawLog(std::format(L"Released Key Code: {:#02x}", currentEvent.GetCode()));
 		}
 	}
 

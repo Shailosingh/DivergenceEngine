@@ -12,18 +12,16 @@ namespace DX
     // Helper class for COM exceptions
     class com_exception : public std::exception
     {
+    private:
+        const HRESULT result;
+        mutable std::string whatMessage;
+        
+        std::string ConvertWideStringToANSI(const std::wstring& wideString) const;
+        
     public:
         com_exception(HRESULT hr) noexcept : result(hr) {}
 
-        const char* what() const noexcept override
-        {
-            static char s_str[64] = {};
-            sprintf_s(s_str, "Failure with HRESULT of %08X", static_cast<unsigned int>(result));
-            return s_str;
-        }
-
-    private:
-        HRESULT result;
+        const char* what() const noexcept override;
     };
 
     // Helper utility converts D3D API failures into exceptions.
@@ -32,9 +30,10 @@ namespace DX
         if (FAILED(hr))
         {
             _com_error error(hr);
-			std::wstring errorMessage = std::format(L"EXCEPTION: {}", error.ErrorMessage());
+            std::wstring errorMessage = std::format(L"EXCEPTION: {}", error.ErrorMessage());
             DivergenceEngine::Logger::Log(errorMessage);
             throw com_exception(hr);
         }
     }
 }
+

@@ -8,5 +8,6 @@
 #include "Window/Window.h"
 #include "Application/Application.h"
 #include "Templates/Templates.h"
+#include "Fonts/Fonts.h"
 
 //#include "Application/EntryPoint.h"
