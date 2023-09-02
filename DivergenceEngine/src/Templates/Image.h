@@ -1,11 +1,11 @@
 #pragma once
-#include "Window/IDrawable.h"
+#include "Templates/UnclickableDrawable.h"
 #include "Graphics/Graphics.h"
 #include <string>
 
 namespace DivergenceEngine::Templates
 {
-	class Image : public DivergenceEngine::IDrawable
+	class Image : public DivergenceEngine::UnclickableDrawable
 	{
 	private:
 		//Datafields
@@ -22,6 +22,6 @@ namespace DivergenceEngine::Templates
 
 		//Overriden functions
 		void Draw() override;
-		bool OnLeftClick() override;
+		bool IsCoordInObject(DirectX::XMINT2 mousePos) override;
 	};
 }

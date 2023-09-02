@@ -94,6 +94,7 @@
     <ClInclude Include="src\Graphics\Graphics.h" />
     <ClInclude Include="src\Templates\Image.h" />
     <ClInclude Include="src\Templates\Templates.h" />
+    <ClInclude Include="src\Templates\UnclickableDrawable.h" />
     <ClInclude Include="src\Window\IDrawable.h" />
     <ClInclude Include="src\Logger\Logger.h" />
     <ClInclude Include="src\Window\IPage.h" />

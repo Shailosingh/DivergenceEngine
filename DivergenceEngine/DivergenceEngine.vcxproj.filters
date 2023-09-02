@@ -63,6 +63,9 @@
     <ClInclude Include="src\Fonts\Fonts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Templates\UnclickableDrawable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Logger\Logger.cpp">

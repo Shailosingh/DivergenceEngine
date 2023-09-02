@@ -41,10 +41,12 @@ namespace DivergenceEngine::Templates
 	{
 		WindowGraphicsController.lock()->DrawSizedSprite(ImageTexture.Get(), Position, Size);
 	}
-
-	bool Image::OnLeftClick()
+	
+	bool Image::IsCoordInObject(DirectX::XMINT2 mousePos)
 	{
-		//Image is not clickable
-		return false; 
+		bool withinXBounds = (mousePos.x >= Position.x) && (mousePos.x <= (Position.x + Size.x));
+		bool withinYBounds = (mousePos.y >= Position.y) && (mousePos.y <= (Position.y + Size.y));
+
+		return withinXBounds && withinYBounds;
 	}
 }
