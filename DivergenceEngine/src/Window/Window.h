@@ -54,6 +54,11 @@ namespace DivergenceEngine
 		std::vector<std::list<std::shared_ptr<IDrawable>>> LayersOfDrawableComponents;
 		void RenderWindow();
 
+		//Layer mouse event handler functions
+		void DispatchMouseEvents();
+		void HandleMousePressReleaseEvent(DivergenceEngine::Mouse::Event newEvent);
+		void HandleMouseOverEvents();
+
 		//Page
 		std::unique_ptr<IPage> PageReference;
 		bool OnWindowDestructionRequest();

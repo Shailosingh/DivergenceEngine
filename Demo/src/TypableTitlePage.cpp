@@ -23,7 +23,7 @@ TypableTitlePage::~TypableTitlePage()
 	DivergenceEngine::Logger::Log(L"TypableTitlePage destructed");
 }
 
-void TypableTitlePage::UpdateWindow(const DX::StepTimer& timer)
+void TypableTitlePage::UpdatePage(const DX::StepTimer& timer)
 {
 	//Handle the char queue
 	while (!WindowReference->KeyboardObject.CharQueueIsEmpty())
@@ -67,27 +67,18 @@ void TypableTitlePage::UpdateWindow(const DX::StepTimer& timer)
 			//DivergenceEngine::Logger::RawLog(std::format(L"Released Key Code: {:#02x}", currentEvent.GetCode()));
 		}
 	}
+	
+	//TODO: Create a Menu IDrawable that will take a pair of images for each menu item (default and hover), the coords and of each item and delegates/function pointers to handle selection
+}
 
-	//Handle the mouse queue
-	while (!WindowReference->MouseObject.IsQueueEmpty())
-	{
-		//Get the mouse event
-		DivergenceEngine::Mouse::Event currentEvent = *WindowReference->MouseObject.GetNextMouseEvent();
+void TypableTitlePage::HandleScroll(int scrollDelta)
+{
+	//TypableTitlePage doesn't scroll
+}
 
-		//If the mouse scrolls, log how much ticks scroll
-		if (currentEvent.GetType() == DivergenceEngine::Mouse::Event::Type::WheelScroll)
-		{
-			//DivergenceEngine::Logger::RawLog(L"Mouse scrolled " + std::to_wstring(currentEvent.GetScrollTicks()) + L" ticks");
-		}
-
-		//If the mouse moves, log the new position
-		else if (currentEvent.GetType() == DivergenceEngine::Mouse::Event::Type::Move)
-		{
-			//DivergenceEngine::Logger::RawLog(L"Mouse moved to (" + std::to_wstring(currentEvent.GetPosX()) + L", " + std::to_wstring(currentEvent.GetPosY()) + L")");
-		}
-	}
-
-	//TODO: Choose how to handle clicks of objects (pass it through the Layering system in Window class (Window::UpdateWindow) or handle it here directly through the objects saved in this page)
+void TypableTitlePage::HandleMouseMove(DirectX::XMINT2 newMousePos)
+{
+	//Doesn't respond to mouse events
 }
 
 bool TypableTitlePage::OnWindowDestructionRequest()

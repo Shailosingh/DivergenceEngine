@@ -311,6 +311,116 @@ namespace DivergenceEngine
 		LayersOfDrawableComponents.clear();
 	}
 
+	void Window::DispatchMouseEvents()
+	{
+		HandleMouseOverEvents();
+		
+		while (!MouseObject.IsQueueEmpty())
+		{
+			//Get the mouse event (will not be empty because it only is if the queue is empty, which is checked in the while loop)
+			DivergenceEngine::Mouse::Event currentEvent = *MouseObject.GetNextMouseEvent();
+
+			switch (currentEvent.GetType())
+			{
+			case DivergenceEngine::Mouse::Event::Type::WheelScroll:
+				PageReference->HandleScroll(currentEvent.GetScrollTicks());
+				break;
+
+			case DivergenceEngine::Mouse::Event::Type::Move:
+				PageReference->HandleMouseMove(DirectX::XMINT2(currentEvent.GetPosX(), currentEvent.GetPosY()));
+				break;
+
+			default:
+				HandleMousePressReleaseEvent(currentEvent);
+				break;
+					
+			}
+		}
+	}
+
+	void Window::HandleMousePressReleaseEvent(DivergenceEngine::Mouse::Event newEvent)
+	{
+		//Iterate through the layers and check if the mouse is over any of the drawables. If it is, try to trigger the appropriate event. When an event is successful, break out
+		for (auto& layer : LayersOfDrawableComponents)
+		{
+			for (auto& component : layer)
+			{
+				if (component->IsCoordInObject(newEvent.GetPos()))
+				{
+					switch (newEvent.GetType())
+					{
+					case DivergenceEngine::Mouse::Event::Type::LPress:
+						if (component->OnLeftPress(newEvent.GetPos()))
+						{
+							return;
+						}
+						break;
+
+					case DivergenceEngine::Mouse::Event::Type::LRelease:
+						if (component->OnLeftRelease(newEvent.GetPos()))
+						{
+							return;
+						}
+						break;
+
+					case DivergenceEngine::Mouse::Event::Type::MPress:
+						if (component->OnMiddlePress(newEvent.GetPos()))
+						{
+							return;
+						}
+						break;
+
+					case DivergenceEngine::Mouse::Event::Type::MRelease:
+						if (component->OnMiddleRelease(newEvent.GetPos()))
+						{
+							return;
+						}
+						break;
+						
+					case DivergenceEngine::Mouse::Event::Type::RPress:
+						if (component->OnRightPress(newEvent.GetPos()))
+						{
+							return;
+						}
+						break;
+
+					case DivergenceEngine::Mouse::Event::Type::RRelease:
+						if (component->OnRightRelease(newEvent.GetPos()))
+						{
+							return;
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	void Window::HandleMouseOverEvents()
+	{
+		//Get the current mouse position
+		DirectX::XMINT2 mousePosition = MouseObject.GetPos();
+
+		//Iterate through every object starting from layer 0, to see if the mouse is over it. When the mouse is over an object, call OnMouseOver. After that, call OnMouseNotOver for rest without checking
+		bool mouseFoundObject = false;
+		for (auto& layer : LayersOfDrawableComponents)
+		{
+			for (auto& component : layer)
+			{
+				if (!mouseFoundObject || component->IsCoordInObject(mousePosition))
+				{
+					component->OnMouseOver();
+					mouseFoundObject = true;
+				}
+
+				else
+				{
+					component->OnMouseNotOver();
+				}
+			}
+		}
+	}
+
 	//Page implemented functions-------------------------------------------------------------------
 	bool Window::OnWindowDestructionRequest()
 	{
@@ -319,7 +429,8 @@ namespace DivergenceEngine
 
 	void Window::UpdateWindow(const DX::StepTimer& timer)
 	{
-		PageReference->UpdateWindow(timer);
+		DispatchMouseEvents();
+		PageReference->UpdatePage(timer);
 	}
 	
 	//Helpers--------------------------------------------------------------------------------------

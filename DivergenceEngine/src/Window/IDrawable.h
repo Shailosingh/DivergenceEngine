@@ -20,6 +20,18 @@ namespace DivergenceEngine
 		virtual bool IsCoordInObject(DirectX::XMINT2 mousePos) = 0;
 
 		/// <summary>
+		/// Called whenever the Window has deemed that the cursor is over the object. This is called
+		/// on every iteration of the message loop that the cursor is over it.
+		/// </summary>
+		virtual void OnMouseOver() = 0;
+
+		/// <summary>
+		/// Called whenever the Window has deemed that the cursor is not over the object. This is called
+		/// on every iteration of the message loop that the cursor is not over it.
+		/// </summary>
+		virtual void OnMouseNotOver() = 0;
+
+		/// <summary>
 		/// The code that runs when the object is pressed down with the left button
 		/// </summary>
 		/// <param name="mousePos">The coordinate of the mouse on the entire screen buffer</param>

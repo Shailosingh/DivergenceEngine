@@ -16,6 +16,8 @@ public:
 	~TypableTitlePage();
 
 	//Overridden functions
-	void UpdateWindow(const DX::StepTimer& timer) override;
+	void UpdatePage(const DX::StepTimer& timer) override;
+	void HandleScroll(int scrollDelta) override;
+	void HandleMouseMove(DirectX::XMINT2 newMousePos) override;
 	bool OnWindowDestructionRequest() override;
 };
