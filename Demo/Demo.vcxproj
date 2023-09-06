@@ -90,10 +90,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Demo.cpp" />
+    <ClCompile Include="src\MainMenuPage.cpp" />
     <ClCompile Include="src\TypableTitlePage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Demo.h" />
+    <ClInclude Include="src\MainMenuPage.h" />
     <ClInclude Include="src\TypableTitlePage.h" />
   </ItemGroup>
   <ItemGroup>

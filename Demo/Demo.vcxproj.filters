@@ -21,12 +21,18 @@
     <ClCompile Include="src\TypableTitlePage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\MainMenuPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Demo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\TypableTitlePage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MainMenuPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

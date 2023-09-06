@@ -60,6 +60,7 @@ namespace DivergenceEngine
 		void HandleMouseOverEvents();
 
 		//Page
+		std::unique_ptr<IPage> QueuedPage;
 		std::unique_ptr<IPage> PageReference;
 		bool OnWindowDestructionRequest();
 		void UpdateWindow(const DX::StepTimer& timer);
@@ -95,6 +96,11 @@ namespace DivergenceEngine
 		std::wstring GetWindowTitle()const noexcept;
 		void SetWindowTitle(const std::wstring& windowTitle) noexcept;
 		void ToggleFullscreen() noexcept;
-		void SetPage(std::unique_ptr<IPage>&& newPage) noexcept;
+
+		/// <summary>
+		/// Queues a new page to be set at the end of the render of the current frame
+		/// </summary>
+		/// <param name="newPage">New page to be set</param>
+		void QueueNewPage(std::unique_ptr<IPage>&& newPage) noexcept;
 	};
 }

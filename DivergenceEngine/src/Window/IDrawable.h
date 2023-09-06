@@ -6,6 +6,8 @@ namespace DivergenceEngine
 	class IDrawable
 	{	
 	public:
+
+		virtual ~IDrawable() {};
 		
 		/// <summary>
 		/// Code that draws the object to the screen.
@@ -23,7 +25,7 @@ namespace DivergenceEngine
 		/// Called whenever the Window has deemed that the cursor is over the object. This is called
 		/// on every iteration of the message loop that the cursor is over it.
 		/// </summary>
-		virtual void OnMouseOver() = 0;
+		virtual void OnMouseOver(DirectX::XMINT2 mousePos) = 0;
 
 		/// <summary>
 		/// Called whenever the Window has deemed that the cursor is not over the object. This is called

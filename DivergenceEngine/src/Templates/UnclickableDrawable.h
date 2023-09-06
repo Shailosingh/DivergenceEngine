@@ -7,7 +7,7 @@ namespace DivergenceEngine
 	class UnclickableDrawable : public IDrawable
 	{
 	public:
-		void OnMouseOver() override {};
+		void OnMouseOver(DirectX::XMINT2 mousePos) override {};
 		void OnMouseNotOver() override {};
 		bool OnLeftPress(DirectX::XMINT2 mousePos) override { return false; };
 		bool OnLeftRelease(DirectX::XMINT2 mousePos) override { return false; };

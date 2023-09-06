@@ -8,6 +8,8 @@ namespace DivergenceEngine
 	class IPage
 	{
 	public:
+		
+		virtual ~IPage() {};
 
 		/// <summary>
 		/// Constructor for the page.

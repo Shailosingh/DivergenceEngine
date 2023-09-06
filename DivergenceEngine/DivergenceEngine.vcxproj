@@ -92,7 +92,9 @@
     <ClInclude Include="src\Fonts\Fonts.h" />
     <ClInclude Include="src\Globals.h" />
     <ClInclude Include="src\Graphics\Graphics.h" />
+    <ClInclude Include="src\Templates\ButtonMenu.h" />
     <ClInclude Include="src\Templates\Image.h" />
+    <ClInclude Include="src\Templates\InvisibleDrawable.h" />
     <ClInclude Include="src\Templates\Templates.h" />
     <ClInclude Include="src\Templates\UnclickableDrawable.h" />
     <ClInclude Include="src\Window\IDrawable.h" />
@@ -107,7 +109,9 @@
     <ClCompile Include="src\DXComErrorHandler.cpp" />
     <ClCompile Include="src\Graphics\Graphics.cpp" />
     <ClCompile Include="src\Logger\Logger.cpp" />
+    <ClCompile Include="src\Templates\ButtonMenu.cpp" />
     <ClCompile Include="src\Templates\Image.cpp" />
+    <ClCompile Include="src\Templates\InvisibleDrawable.cpp" />
     <ClCompile Include="src\Window\Keyboard.cpp" />
     <ClCompile Include="src\Window\Mouse.cpp" />
     <ClCompile Include="src\Window\Window.cpp" />

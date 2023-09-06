@@ -7,11 +7,11 @@ void TypableTitlePage::Initialize(DivergenceEngine::Window* windowReference)
 	WindowReference = windowReference;
 	
 	//Load image on foreground
-	std::shared_ptr<DivergenceEngine::Templates::Image> bisonImage = std::make_shared<DivergenceEngine::Templates::Image>(L"Images\\Bison.png", WindowReference->GraphicsController, DirectX::SimpleMath::Vector2(350, 200), DirectX::SimpleMath::Vector2(300, 207));
+	std::shared_ptr<DivergenceEngine::Templates::Image> bisonImage = std::make_shared<DivergenceEngine::Templates::Image>(L"Images\\TypableTitlePage\\Bison.png", WindowReference->GraphicsController, DirectX::SimpleMath::Vector2(350, 200), DirectX::SimpleMath::Vector2(300, 207));
 	WindowReference->AddDrawableComponent(bisonImage, 1);
 
 	//Load image on background layer
-	std::shared_ptr<DivergenceEngine::Templates::Image> backgroundImage = std::make_shared<DivergenceEngine::Templates::Image>(L"Images\\Plains.jpg", WindowReference->GraphicsController, DirectX::SimpleMath::Vector2(0, 0));
+	std::shared_ptr<DivergenceEngine::Templates::Image> backgroundImage = std::make_shared<DivergenceEngine::Templates::Image>(L"Images\\TypableTitlePage\\Plains.jpg", WindowReference->GraphicsController, DirectX::SimpleMath::Vector2(0, 0));
 	WindowReference->AddDrawableComponent(backgroundImage, 0);
 
 	DivergenceEngine::Logger::Log(L"TypableTitlePage constructed");

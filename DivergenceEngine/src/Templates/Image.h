@@ -19,7 +19,12 @@ namespace DivergenceEngine::Templates
 		//Constructors and Destructors
 		Image(std::wstring filePath, std::weak_ptr<Graphics> graphicsController, DirectX::SimpleMath::Vector2 position);
 		Image(std::wstring filePath, std::weak_ptr<Graphics> graphicsController, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 size);
+		~Image();
 
+		//Helpers
+		DirectX::SimpleMath::Vector2 GetPosition() { return Position; }
+		DirectX::SimpleMath::Vector2 GetSize() { return Size; }
+		
 		//Overriden functions
 		void Draw() override;
 		bool IsCoordInObject(DirectX::XMINT2 mousePos) override;

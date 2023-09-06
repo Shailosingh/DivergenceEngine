@@ -260,6 +260,18 @@ namespace DivergenceEngine
 	{
 		UpdateWindow(timer);
 		RenderWindow();
+
+		//Swap out page if user requests
+		if (QueuedPage != nullptr)
+		{
+			//Clear out all remaining drawables old page on screen
+			ClearAllLayers();
+			
+			PageReference = std::move(QueuedPage);
+			QueuedPage = nullptr;
+
+			PageReference->Initialize(this);
+		}
 	}
 
 	void Window::AddDrawableComponent(std::shared_ptr<IDrawable> drawableComponent, size_t layer)
@@ -409,7 +421,7 @@ namespace DivergenceEngine
 			{
 				if (!mouseFoundObject || component->IsCoordInObject(mousePosition))
 				{
-					component->OnMouseOver();
+					component->OnMouseOver(mousePosition);
 					mouseFoundObject = true;
 				}
 
@@ -488,8 +500,8 @@ namespace DivergenceEngine
 		IsFullscreen = !IsFullscreen;
 	}
 
-	void Window::SetPage(std::unique_ptr<IPage>&& newPage) noexcept
+	void Window::QueueNewPage(std::unique_ptr<IPage>&& newPage) noexcept
 	{
-		PageReference = std::move(newPage);
+		QueuedPage = std::move(newPage);
 	}
 }
