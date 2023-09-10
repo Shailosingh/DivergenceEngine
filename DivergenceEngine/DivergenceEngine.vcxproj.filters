@@ -72,7 +72,19 @@
     <ClInclude Include="src\Templates\InvisibleDrawable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Audio\AudioProcessor.h">
+    <ClInclude Include="src\Audio\IAudioInstance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Audio\OGGAudioInstance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Audio\WAVAudioInstance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\StringConverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Audio\AudioIncludes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -105,6 +117,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Templates\InvisibleDrawable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Audio\WAVAudioInstance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

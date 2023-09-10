@@ -6,6 +6,7 @@ class MainMenuPage : public DivergenceEngine::IPage
 private:
 	//Datafields
 	DivergenceEngine::Window* WindowReference;
+	std::unique_ptr<DivergenceEngine::IAudioInstance> BackgroundMusic;
 
 	//Menu callback functions
 	void Menu_Start();

@@ -6,6 +6,10 @@ using namespace DivergenceEngine::Templates;
 void MainMenuPage::Initialize(DivergenceEngine::Window* windowReference)
 {
 	WindowReference = windowReference;
+
+	//Load background music
+	BackgroundMusic = std::make_unique<DivergenceEngine::WAVAudioInstance>(WindowReference->AudioController.get(), L"Audio\\MainMenu.wav", 1);
+	BackgroundMusic->Play(true);
 	
 	//Load image on foreground
 	std::shared_ptr<Image> menuSplash = std::make_shared<Image>(L"Images\\MainMenuPage\\TITLE.png", WindowReference->GraphicsController, DirectX::SimpleMath::Vector2(0, 0));

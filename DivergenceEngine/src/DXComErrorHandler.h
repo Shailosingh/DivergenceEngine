@@ -16,8 +16,6 @@ namespace DX
         const HRESULT result;
         mutable std::string whatMessage;
         
-        std::string ConvertWideStringToANSI(const std::wstring& wideString) const;
-        
     public:
         com_exception(HRESULT hr) noexcept : result(hr) {}
 

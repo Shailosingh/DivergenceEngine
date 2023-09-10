@@ -10,6 +10,7 @@
 #include "Graphics/Graphics.h"
 #include "IDrawable.h"
 #include "IPage.h"
+#include <Audio.h>
 
 namespace DivergenceEngine
 {
@@ -64,7 +65,10 @@ namespace DivergenceEngine
 		std::unique_ptr<IPage> PageReference;
 		bool OnWindowDestructionRequest();
 		void UpdateWindow(const DX::StepTimer& timer);
-		
+
+		//Audio
+		bool RetryAudio;
+		void UpdateAudio();
 
 	public:
 		Window(uint16_t clientWidth, uint16_t clientHeight, const wchar_t* windowTitle, std::unique_ptr<IPage>&& page);
@@ -76,6 +80,7 @@ namespace DivergenceEngine
 		Keyboard KeyboardObject;
 		Mouse MouseObject;
 		std::shared_ptr<Graphics> GraphicsController;
+		std::unique_ptr<DirectX::AudioEngine> AudioController;
 
 		//Move constructor
 		Window(Window&& otherWindow) = delete;

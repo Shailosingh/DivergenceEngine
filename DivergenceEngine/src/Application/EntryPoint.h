@@ -64,5 +64,5 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		MessageBoxA(NULL, e.what(), "Error On Exit Of Game", MB_OK | MB_ICONERROR);
 	}
 	
-	return incomingMessage.wParam;
+	return (int)incomingMessage.wParam;
 }

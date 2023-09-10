@@ -50,6 +50,7 @@ namespace DivergenceEngine
 		ClientWidth(clientWidth),
 		ClientHeight(clientHeight),
 		WindowTitle(windowTitle),
+		RetryAudio(false),
 		PageReference(std::move(page))
 	{	
 		//Create window rect from client size
@@ -86,12 +87,19 @@ namespace DivergenceEngine
 		//Initialize the graphics controller
 		GraphicsController = std::make_shared<Graphics>(Application::GetFrameRate(), WindowHandle, clientWidth, clientHeight);
 
-		//Initialize the page, with the window pointer
-		PageReference->Initialize(this);
+		//Initialize the audio
+		DirectX::AUDIO_ENGINE_FLAGS eflags = DirectX::AudioEngine_Default;
+#ifdef _DEBUG
+		eflags |= DirectX::AudioEngine_Debug;
+#endif
+		AudioController = std::make_unique<DirectX::AudioEngine>(eflags);
 
 		//Initialize size for three layers of drawables
 		LayersOfDrawableComponents.reserve(3);
 		
+		//Initialize the page, with the window pointer
+		PageReference->Initialize(this);
+
 		Logger::Log(std::format(L"Window '{}' Constructed", WindowTitle));
 	}
 
@@ -101,6 +109,12 @@ namespace DivergenceEngine
 		if (WindowHandle == nullptr)
 		{
 			return;
+		}
+		
+		//Suspend audio on window close
+		if (AudioController)
+		{
+			AudioController->Suspend();
 		}
 		
 		DestroyWindow(WindowHandle);
@@ -258,6 +272,7 @@ namespace DivergenceEngine
 	
 	void Window::UpdateAndDraw(const DX::StepTimer& timer)
 	{
+		UpdateAudio();
 		UpdateWindow(timer);
 		RenderWindow();
 
@@ -266,6 +281,9 @@ namespace DivergenceEngine
 		{
 			//Clear out all remaining drawables old page on screen
 			ClearAllLayers();
+
+			//Suspend the audio
+			AudioController->Suspend();
 			
 			PageReference = std::move(QueuedPage);
 			QueuedPage = nullptr;
@@ -443,6 +461,23 @@ namespace DivergenceEngine
 	{
 		DispatchMouseEvents();
 		PageReference->UpdatePage(timer);
+	}
+
+	//Audio----------------------------------------------------------------------------------------
+	void Window::UpdateAudio()
+	{
+		if (RetryAudio)
+		{
+			RetryAudio = false;
+			AudioController->Reset();
+		}
+		else if (!AudioController->Update())
+		{
+			if (AudioController->IsCriticalError())
+			{
+				RetryAudio = true;
+			}
+		}
 	}
 	
 	//Helpers--------------------------------------------------------------------------------------

@@ -87,12 +87,16 @@
     <ClInclude Include="src\Application\Application.h" />
     <ClInclude Include="src\Application\EntryPoint.h" />
     <ClInclude Include="src\Application\StepTimer.h" />
-    <ClInclude Include="src\Audio\AudioProcessor.h" />
+    <ClInclude Include="src\Audio\AudioIncludes.h" />
+    <ClInclude Include="src\Audio\IAudioInstance.h" />
+    <ClInclude Include="src\Audio\OGGAudioInstance.h" />
+    <ClInclude Include="src\Audio\WAVAudioInstance.h" />
     <ClInclude Include="src\DivergenceEngine.h" />
     <ClInclude Include="src\DXComErrorHandler.h" />
     <ClInclude Include="src\Fonts\Fonts.h" />
     <ClInclude Include="src\Globals.h" />
     <ClInclude Include="src\Graphics\Graphics.h" />
+    <ClInclude Include="src\StringConverter.h" />
     <ClInclude Include="src\Templates\ButtonMenu.h" />
     <ClInclude Include="src\Templates\Image.h" />
     <ClInclude Include="src\Templates\InvisibleDrawable.h" />
@@ -107,6 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application\Application.cpp" />
+    <ClCompile Include="src\Audio\WAVAudioInstance.cpp" />
     <ClCompile Include="src\DXComErrorHandler.cpp" />
     <ClCompile Include="src\Graphics\Graphics.cpp" />
     <ClCompile Include="src\Logger\Logger.cpp" />
