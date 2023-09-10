@@ -11,6 +11,7 @@
 #include "IDrawable.h"
 #include "IPage.h"
 #include <Audio.h>
+#include <thread>
 
 namespace DivergenceEngine
 {
@@ -67,6 +68,9 @@ namespace DivergenceEngine
 		void UpdateWindow(const DX::StepTimer& timer);
 
 		//Audio
+		bool IsAudioControllerUpdating;
+		std::thread AudioUpdateThread;
+		void AudioUpdateThreadFunction();
 		bool RetryAudio;
 		void UpdateAudio();
 

@@ -31,10 +31,9 @@ namespace DivergenceEngine
 		FilePath = filePath;
 		
 		//Open up the file for binary reading
-		std::ifstream inputReader;
-		inputReader.open(FilePath, std::ios::binary);
-		inputReader >> std::noskipws;
-		if (!inputReader)
+		FileInputReader.open(FilePath, std::ios::binary);
+		FileInputReader >> std::noskipws;
+		if (!FileInputReader)
 		{
 			assert(false);
 			throw std::runtime_error(DivergenceEngine::StringConverter::ConvertWideStringToANSI(std::format(L"WAVAudioInstance::WAVAudioInstance() - failed to open '{}' for reading", FilePath)));
@@ -42,7 +41,7 @@ namespace DivergenceEngine
 
 		//Read the RIFF header
 		RIFFHeader riffHeader;
-		inputReader.read(reinterpret_cast<char*>(&riffHeader), sizeof(RIFFHeader));
+		FileInputReader.read(reinterpret_cast<char*>(&riffHeader), sizeof(RIFFHeader));
 
 		//Check if the RIFF header is correct
 		size_t correctRemainingFileSize = fs::file_size(FilePath) - 8;
@@ -56,7 +55,7 @@ namespace DivergenceEngine
 		//Search for the FMT chunk
 		SubchunkHeader subchunkHeader;
 		bool isFoundFmtChunk = false;
-		while (inputReader.read(reinterpret_cast<char*>(&subchunkHeader), sizeof(SubchunkHeader)))
+		while (FileInputReader.read(reinterpret_cast<char*>(&subchunkHeader), sizeof(SubchunkHeader)))
 		{
 			if (IsCorrectFourCC(subchunkHeader.Header, FMT_CHUNK))
 			{
@@ -65,7 +64,7 @@ namespace DivergenceEngine
 			}
 			else
 			{
-				inputReader.seekg(subchunkHeader.ChunkSize, std::ios::cur);
+				FileInputReader.seekg(subchunkHeader.ChunkSize, std::ios::cur);
 			}
 		}
 
@@ -77,7 +76,7 @@ namespace DivergenceEngine
 		}
 
 		//Read the FMT chunk
-		inputReader.read(reinterpret_cast<char*>(&FormatChunk), sizeof(FMTChunk));
+		FileInputReader.read(reinterpret_cast<char*>(&FormatChunk), sizeof(FMTChunk));
 		
 		//Ensure the data will be PCM
 		if (FormatChunk.AudioFormat != PCM_FORMAT)
@@ -88,7 +87,7 @@ namespace DivergenceEngine
 
 		//Search for data chunk
 		bool isFoundDataChunk = false;
-		while (inputReader.read(reinterpret_cast<char*>(&subchunkHeader), sizeof(SubchunkHeader)))
+		while (FileInputReader.read(reinterpret_cast<char*>(&subchunkHeader), sizeof(SubchunkHeader)))
 		{
 			if (IsCorrectFourCC(subchunkHeader.Header, DATA_CHUNK))
 			{
@@ -97,7 +96,7 @@ namespace DivergenceEngine
 			}
 			else
 			{
-				inputReader.seekg(subchunkHeader.ChunkSize, std::ios::cur);
+				FileInputReader.seekg(subchunkHeader.ChunkSize, std::ios::cur);
 			}
 		}
 
@@ -112,11 +111,8 @@ namespace DivergenceEngine
 		DataChunkSize = subchunkHeader.ChunkSize;
 		
 		//Record the current byte offset
-		DataChunkOffsetInFile = inputReader.tellg();
+		DataChunkOffsetInFile = FileInputReader.tellg();
 		DataChunkCurrentIndex = 0;
-
-		//Close the file
-		inputReader.close();
 
 		//Create the sound instance
 		SoundEffectInstance = std::make_unique<DirectX::DynamicSoundEffectInstance>(
@@ -125,6 +121,11 @@ namespace DivergenceEngine
 			FormatChunk.SampleRate*PlaybackSpeedMultiplier, 
 			FormatChunk.NumChannels, 
 			FormatChunk.BitsPerSample);
+	}
+
+	WAVAudioInstance::~WAVAudioInstance()
+	{
+		FileInputReader.close();
 	}
 
 	void WAVAudioInstance::Play(bool isLoop)
@@ -193,20 +194,11 @@ namespace DivergenceEngine
 
 	uint8_t WAVAudioInstance::LoadNewAudioBuffers(uint8_t numberOfNewBuffersRequired)
 	{
-		uint32_t targetBufferSize = 5*FormatChunk.ByteRate * PlaybackSpeedMultiplier;
-		
-		//Open up the file
-		std::ifstream inputReader;
-		inputReader.open(FilePath, std::ios::binary);
-		inputReader >> std::noskipws;
-		if (!inputReader)
-		{
-			assert(false);
-			throw std::runtime_error(DivergenceEngine::StringConverter::ConvertWideStringToANSI(std::format(L"WAVAudioInstance::LoadNewAudioBuffers() - failed to open '{}' for reading", FilePath)));
-		}
+		uint32_t targetBufferSize = FormatChunk.ByteRate * PlaybackSpeedMultiplier;
+		//uint32_t targetBufferSize = 512 * FormatChunk.BlockAlign * PlaybackSpeedMultiplier;
 
 		//Seek to the correct position
-		inputReader.seekg(DataChunkOffsetInFile + DataChunkCurrentIndex, std::ios::beg);
+		FileInputReader.seekg(DataChunkOffsetInFile + DataChunkCurrentIndex, std::ios::beg);
 
 		//Fill the buffers and stop early if the end of the file is reached
 		uint8_t realNumberOfNewBuffersLoaded = 0;
@@ -221,21 +213,18 @@ namespace DivergenceEngine
 
 			uint32_t bytesToRead = std::min(bytesLeftInFile, targetBufferSize);
 			AudioBuffers[realNumberOfNewBuffersLoaded].resize(bytesToRead);
-			inputReader.read(reinterpret_cast<char*>(&AudioBuffers[realNumberOfNewBuffersLoaded].front()), AudioBuffers[realNumberOfNewBuffersLoaded].size());
+			FileInputReader.read(reinterpret_cast<char*>(&AudioBuffers[realNumberOfNewBuffersLoaded].front()), AudioBuffers[realNumberOfNewBuffersLoaded].size());
 			
 			//Increment the index by the bytes read and if the end of the file is reached, loop back to the start if looping is enabled
 			DataChunkCurrentIndex += bytesToRead;
 			if (DataChunkCurrentIndex == DataChunkSize && IsLoop)
 			{
 				DataChunkCurrentIndex = 0;
-				inputReader.seekg(DataChunkOffsetInFile, std::ios::beg);
+				FileInputReader.seekg(DataChunkOffsetInFile, std::ios::beg);
 			}
 
 			realNumberOfNewBuffersLoaded++;
 		}
-
-		//Close the file
-		inputReader.close();
 
 		return realNumberOfNewBuffersLoaded;
 	}

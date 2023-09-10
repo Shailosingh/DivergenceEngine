@@ -5,6 +5,7 @@
 #include <string>
 #include <array>
 #include <vector>
+#include <fstream>
 
 //http://soundfile.sapp.org/doc/WaveFormat/
 //https://en.wikipedia.org/wiki/WAV
@@ -46,11 +47,12 @@ namespace DivergenceEngine
 
 		//General Datafields
 		DirectX::AudioEngine* EnginePointer;
-		const static uint8_t MAX_NUM_OF_BUFFERS = 20;
+		const static uint8_t MAX_NUM_OF_BUFFERS = 3;
 		std::array<std::vector<uint8_t>, MAX_NUM_OF_BUFFERS> AudioBuffers;
 		std::unique_ptr<DirectX::DynamicSoundEffectInstance> SoundEffectInstance;
 		uint8_t PlaybackSpeedMultiplier;
 		uint32_t DataChunkCurrentIndex;
+		std::ifstream FileInputReader;
 		bool IsLoop;
 
 		//WAV Datafields
@@ -77,6 +79,7 @@ namespace DivergenceEngine
 	public:
 		//Constructors and destructors
 		WAVAudioInstance(DirectX::AudioEngine* engine, std::wstring filePath, uint8_t initialPlaybackSpeedMultiplier = 1);
+		~WAVAudioInstance();
 
 		//Overriden functions
 		void Play(bool isLoop = true) override;

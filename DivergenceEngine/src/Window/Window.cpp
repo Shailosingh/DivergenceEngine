@@ -94,6 +94,10 @@ namespace DivergenceEngine
 #endif
 		AudioController = std::make_unique<DirectX::AudioEngine>(eflags);
 
+		//Start up audio thread
+		IsAudioControllerUpdating = true;
+		AudioUpdateThread = std::thread(&Window::AudioUpdateThreadFunction, this);
+
 		//Initialize size for three layers of drawables
 		LayersOfDrawableComponents.reserve(3);
 		
@@ -116,6 +120,10 @@ namespace DivergenceEngine
 		{
 			AudioController->Suspend();
 		}
+
+		//Close up the audio update thread
+		IsAudioControllerUpdating = false;
+		AudioUpdateThread.join();
 		
 		DestroyWindow(WindowHandle);
 		Logger::Log(std::format(L"Window '{}' Destructed", WindowTitle));
@@ -272,7 +280,6 @@ namespace DivergenceEngine
 	
 	void Window::UpdateAndDraw(const DX::StepTimer& timer)
 	{
-		UpdateAudio();
 		UpdateWindow(timer);
 		RenderWindow();
 
@@ -464,6 +471,15 @@ namespace DivergenceEngine
 	}
 
 	//Audio----------------------------------------------------------------------------------------
+	void Window::AudioUpdateThreadFunction()
+	{
+		while (IsAudioControllerUpdating)
+		{
+			UpdateAudio();
+			Sleep(15);
+		}
+	}
+
 	void Window::UpdateAudio()
 	{
 		if (RetryAudio)
