@@ -104,6 +104,16 @@ void MainMenuPage::UpdatePage(const DX::StepTimer& timer)
 		case VK_RETURN:
 			WindowReference->ToggleFullscreen();
 			break;
+
+		//1 key
+		case '1':
+			BackgroundMusic->SetPlaybackSpeedMultiplier(1);
+			break;
+			
+		//2 key
+		case '2':
+			BackgroundMusic->SetPlaybackSpeedMultiplier(2);
+			break;
 		}
 	}
 }

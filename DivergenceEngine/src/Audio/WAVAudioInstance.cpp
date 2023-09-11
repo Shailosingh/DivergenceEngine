@@ -164,6 +164,9 @@ namespace DivergenceEngine
 			throw std::invalid_argument("WAVAudioInstance::SetPlaybackSpeedMultiplier() - newPlaybackSpeedMultiplier cannot be 0");
 		}
 		
+		//Check if the song is already playing and if it was looping
+		bool isPlaying = SoundEffectInstance->GetState() == DirectX::SoundState::PLAYING;
+		
 		//Reset the instance with the altered sample rate based on the new playback speed multiplier
 		PlaybackSpeedMultiplier = newPlaybackSpeedMultiplier;
 		SoundEffectInstance = std::make_unique<DirectX::DynamicSoundEffectInstance>(
@@ -172,6 +175,11 @@ namespace DivergenceEngine
 			FormatChunk.SampleRate * PlaybackSpeedMultiplier,
 			FormatChunk.NumChannels,
 			FormatChunk.BitsPerSample);
+
+		if (isPlaying)
+		{
+			this->Play(IsLoop);
+		}
 	}
 
 	void WAVAudioInstance::BufferNeeded(DirectX::DynamicSoundEffectInstance* instance)
@@ -194,8 +202,8 @@ namespace DivergenceEngine
 
 	uint8_t WAVAudioInstance::LoadNewAudioBuffers(uint8_t numberOfNewBuffersRequired)
 	{
-		uint32_t targetBufferSize = FormatChunk.ByteRate * PlaybackSpeedMultiplier;
-		//uint32_t targetBufferSize = 512 * FormatChunk.BlockAlign * PlaybackSpeedMultiplier;
+		uint32_t targetBufferSize = 15* FormatChunk.ByteRate * PlaybackSpeedMultiplier;
+		//uint32_t targetBufferSize = 1024 * FormatChunk.BlockAlign * PlaybackSpeedMultiplier;
 
 		//Seek to the correct position
 		FileInputReader.seekg(DataChunkOffsetInFile + DataChunkCurrentIndex, std::ios::beg);

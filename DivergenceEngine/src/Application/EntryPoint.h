@@ -13,14 +13,6 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 {
 	DivergenceEngine::Logger::Log(L"Welcome to the Divergence Engine! Here we take the road less travelled by...");
 
-	//Initialize COM for multithreaded
-	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-	if (FAILED(hr))
-	{
-		DivergenceEngine::Logger::Log(L"Failed to initialize COM for multithreaded");
-		return -1;
-	}
-
 	//Throw MessageBox for any unhandled exceptions during initialization of application and then exit
 	DivergenceEngine::Application* application;
 	try
