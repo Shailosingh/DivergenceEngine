@@ -47,13 +47,16 @@ namespace DivergenceEngine
 
 		//General Datafields
 		DirectX::AudioEngine* EnginePointer;
-		const static uint8_t MAX_NUM_OF_BUFFERS = 3;
-		std::array<std::vector<uint8_t>, MAX_NUM_OF_BUFFERS> AudioBuffers;
 		std::unique_ptr<DirectX::DynamicSoundEffectInstance> SoundEffectInstance;
 		uint8_t PlaybackSpeedMultiplier;
-		uint32_t DataChunkCurrentIndex;
-		std::ifstream FileInputReader;
 		bool IsLoop;
+
+		//Memory mapped file datafields
+		HANDLE FileHandle;
+		HANDLE FileMappingHandle;
+		uint8_t* OriginalFileMappingPointer;
+		uint8_t* DataChunkFileMappingPointer;
+		uint32_t DataChunkCurrentIndex;
 
 		//WAV Datafields
 		std::wstring FilePath;
@@ -63,15 +66,6 @@ namespace DivergenceEngine
 
 		//Buffer functions
 		void BufferNeeded(DirectX::DynamicSoundEffectInstance* instance);
-
-		/// <summary>
-		/// Loads a number of new buffers into the array of buffers
-		/// so they can be played. It returns the number of buffers sucessfully
-		/// retrieved
-		/// </summary>
-		/// <param name="numberOfNewBuffersRequired">Requested number of new buffers</param>
-		/// <returns>Actual number of new buffers</returns>
-		uint8_t LoadNewAudioBuffers(uint8_t numberOfNewBuffersRequired);
 
 		//Helpers
 		bool IsCorrectFourCC(const char* chunkFourCC, const char* correctFourCC) const;
