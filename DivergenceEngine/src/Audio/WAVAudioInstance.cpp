@@ -34,7 +34,7 @@ namespace DivergenceEngine
 		DWORD granularity = systemInfo.dwAllocationGranularity;
 		DWORD fileMapStart = static_cast<DWORD>(FileInfo.DataChunkOffsetInFile / granularity) * granularity;
 		DWORD fileViewSize = static_cast<DWORD>(FileInfo.DataChunkOffsetInFile % granularity) + FileInfo.DataChunkSize;
-		DWORD viewDelta = FileInfo.DataChunkOffsetInFile - fileMapStart;
+		DWORD viewDelta = static_cast<DWORD>(FileInfo.DataChunkOffsetInFile) - fileMapStart;
 
 		//Memory map the data chunk
 		FileHandle = CreateFile
