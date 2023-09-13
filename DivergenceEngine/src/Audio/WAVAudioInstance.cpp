@@ -24,113 +24,23 @@ namespace DivergenceEngine
 		}
 		PlaybackSpeedMultiplier = initialPlaybackSpeedMultiplier;
 		
-		if (!fs::exists(filePath))
-		{
-			throw std::invalid_argument("WAVAudioInstance::WAVAudioInstance() - filePath does not exist");
-		}
-		FilePath = filePath;
-		
-		//Open up the file for binary reading
-		std::ifstream fileInputReader;
-		fileInputReader.open(FilePath, std::ios::binary);
-		fileInputReader >> std::noskipws;
-		if (!fileInputReader)
-		{
-			assert(false);
-			throw std::runtime_error(DivergenceEngine::StringConverter::ConvertWideStringToANSI(std::format(L"WAVAudioInstance::WAVAudioInstance() - failed to open '{}' for reading", FilePath)));
-		}
-
-		//Read the RIFF header
-		RIFFHeader riffHeader;
-		fileInputReader.read(reinterpret_cast<char*>(&riffHeader), sizeof(RIFFHeader));
-
-		//Check if the RIFF header is correct
-		size_t correctRemainingFileSize = fs::file_size(FilePath) - 8;
-		bool isCorrectRemainingFileSize = riffHeader.RemainingFileSize == correctRemainingFileSize;
-		if (!(IsCorrectFourCC(riffHeader.Header, RIFF_HEADER) && IsCorrectFourCC(riffHeader.Format, WAVE_FORMAT) && isCorrectRemainingFileSize))
-		{
-			assert(false);
-			throw std::runtime_error(DivergenceEngine::StringConverter::ConvertWideStringToANSI(std::format(L"WAVAudioInstance::WAVAudioInstance() - '{}' is not a valid RIFF file", FilePath)));
-		}
-
-		//Search for the FMT chunk
-		SubchunkHeader subchunkHeader;
-		bool isFoundFmtChunk = false;
-		while (fileInputReader.read(reinterpret_cast<char*>(&subchunkHeader), sizeof(SubchunkHeader)))
-		{
-			if (IsCorrectFourCC(subchunkHeader.Header, FMT_CHUNK))
-			{
-				isFoundFmtChunk = true;
-				break;
-			}
-			else
-			{
-				fileInputReader.seekg(subchunkHeader.ChunkSize, std::ios::cur);
-			}
-		}
-
-		//Check if the FMT chunk was found
-		if (!isFoundFmtChunk)
-		{
-			assert(false);
-			throw std::runtime_error(DivergenceEngine::StringConverter::ConvertWideStringToANSI(std::format(L"WAVAudioInstance::WAVAudioInstance() - '{}' does not contain a FMT chunk", FilePath)));
-		}
-
-		//Read the FMT chunk
-		fileInputReader.read(reinterpret_cast<char*>(&FormatChunk), sizeof(FMTChunk));
-		
-		//Ensure the data will be PCM
-		if (FormatChunk.AudioFormat != PCM_FORMAT)
-		{
-			assert(false);
-			throw std::runtime_error(DivergenceEngine::StringConverter::ConvertWideStringToANSI(std::format(L"WAVAudioInstance::WAVAudioInstance() - '{}' is not PCM", FilePath)));
-		}
-
-		//Search for data chunk
-		bool isFoundDataChunk = false;
-		while (fileInputReader.read(reinterpret_cast<char*>(&subchunkHeader), sizeof(SubchunkHeader)))
-		{
-			if (IsCorrectFourCC(subchunkHeader.Header, DATA_CHUNK))
-			{
-				isFoundDataChunk = true;
-				break;
-			}
-			else
-			{
-				fileInputReader.seekg(subchunkHeader.ChunkSize, std::ios::cur);
-			}
-		}
-
-		//Check if the data chunk was found
-		if (!isFoundDataChunk)
-		{
-			assert(false);
-			throw std::runtime_error(DivergenceEngine::StringConverter::ConvertWideStringToANSI(std::format(L"WAVAudioInstance::WAVAudioInstance() - '{}' does not contain a DATA chunk", FilePath)));
-		}
-		
-		//Read the data chunk size
-		DataChunkSize = subchunkHeader.ChunkSize;
-		
-		//Record the current byte offset
-		DataChunkOffsetInFile = fileInputReader.tellg();
+		//Read the WAV file header info
+		FileInfo = WAVFileReader::ReadWAVFile(filePath);
 		DataChunkCurrentIndex = 0;
-
-		//Close up the file reader
-		fileInputReader.close();
 
 		//Inspect the granularity and based on this, find the correct file map start, map size and view size
 		SYSTEM_INFO systemInfo;
 		GetSystemInfo(&systemInfo);
 		DWORD granularity = systemInfo.dwAllocationGranularity;
-		DWORD fileMapStart = static_cast<DWORD>(DataChunkOffsetInFile / granularity) * granularity;
-		DWORD fileViewSize = static_cast<DWORD>(DataChunkOffsetInFile % granularity) + DataChunkSize;
-		DWORD fileMapSize = static_cast<DWORD>(DataChunkOffsetInFile + DataChunkSize);
-		DWORD viewDelta = DataChunkOffsetInFile - fileMapStart;
+		DWORD fileMapStart = static_cast<DWORD>(FileInfo.DataChunkOffsetInFile / granularity) * granularity;
+		DWORD fileViewSize = static_cast<DWORD>(FileInfo.DataChunkOffsetInFile % granularity) + FileInfo.DataChunkSize;
+		DWORD fileMapSize = static_cast<DWORD>(FileInfo.DataChunkOffsetInFile + FileInfo.DataChunkSize);
+		DWORD viewDelta = FileInfo.DataChunkOffsetInFile - fileMapStart;
 
 		//Memory map the data chunk
 		FileHandle = CreateFile
 		(
-			FilePath.c_str(),
+			FileInfo.FilePath.c_str(),
 			GENERIC_READ,
 			FILE_SHARE_READ,
 			NULL,
@@ -140,7 +50,7 @@ namespace DivergenceEngine
 		);
 		if (FileHandle == INVALID_HANDLE_VALUE)
 		{
-			throw std::runtime_error(DivergenceEngine::StringConverter::ConvertWideStringToANSI(std::format(L"WAVAudioInstance::WAVAudioInstance() - '{}' unable to be opened as a Win32 file handle", FilePath)));
+			throw std::runtime_error(DivergenceEngine::StringConverter::ConvertWideStringToANSI(std::format(L"WAVAudioInstance::WAVAudioInstance() - '{}' unable to be opened as a Win32 file handle", FileInfo.FilePath)));
 		}
 
 		FileMappingHandle = CreateFileMapping
@@ -154,7 +64,7 @@ namespace DivergenceEngine
 		);
 		if (FileMappingHandle == NULL)
 		{
-			throw std::runtime_error(DivergenceEngine::StringConverter::ConvertWideStringToANSI(std::format(L"WAVAudioInstance::WAVAudioInstance() - '{}' unable to be opened as a Win32 File Map", FilePath)));
+			throw std::runtime_error(DivergenceEngine::StringConverter::ConvertWideStringToANSI(std::format(L"WAVAudioInstance::WAVAudioInstance() - '{}' unable to be opened as a Win32 File Map", FileInfo.FilePath)));
 		}
 		
 		OriginalFileMappingPointer = (uint8_t*)MapViewOfFile
@@ -169,7 +79,7 @@ namespace DivergenceEngine
 		{
 			DWORD lastErrorCode = GetLastError();
 			HRESULT hr = HRESULT_FROM_WIN32(lastErrorCode);
-			throw std::runtime_error(DivergenceEngine::StringConverter::ConvertWideStringToANSI(std::format(L"WAVAudioInstance::WAVAudioInstance() - '{}' data chunk unable to be opened as a Win32 File Map View", FilePath)));
+			throw std::runtime_error(DivergenceEngine::StringConverter::ConvertWideStringToANSI(std::format(L"WAVAudioInstance::WAVAudioInstance() - '{}' data chunk unable to be opened as a Win32 File Map View", FileInfo.FilePath)));
 		}
 
 		//Resolve delta
@@ -179,9 +89,9 @@ namespace DivergenceEngine
 		SoundEffectInstance = std::make_unique<DirectX::DynamicSoundEffectInstance>(
 			EnginePointer,
 			std::bind(&WAVAudioInstance::BufferNeeded, this, std::placeholders::_1),
-			FormatChunk.SampleRate*PlaybackSpeedMultiplier, 
-			FormatChunk.NumChannels, 
-			FormatChunk.BitsPerSample);
+			FileInfo.FormatChunk.SampleRate*PlaybackSpeedMultiplier,
+			FileInfo.FormatChunk.NumChannels,
+			FileInfo.FormatChunk.BitsPerSample);
 	}
 
 	WAVAudioInstance::~WAVAudioInstance()
@@ -238,9 +148,9 @@ namespace DivergenceEngine
 		SoundEffectInstance = std::make_unique<DirectX::DynamicSoundEffectInstance>(
 			EnginePointer,
 			std::bind(&WAVAudioInstance::BufferNeeded, this, std::placeholders::_1),
-			FormatChunk.SampleRate * PlaybackSpeedMultiplier,
-			FormatChunk.NumChannels,
-			FormatChunk.BitsPerSample);
+			FileInfo.FormatChunk.SampleRate * PlaybackSpeedMultiplier,
+			FileInfo.FormatChunk.NumChannels,
+			FileInfo.FormatChunk.BitsPerSample);
 
 		if (isPlaying)
 		{
@@ -248,42 +158,41 @@ namespace DivergenceEngine
 		}
 	}
 
+	//TODO: Handle "Detecting new audio devices" (https://github.com/microsoft/DirectXTK/wiki/Adding-audio-to-your-project#detecting-new-audio-devices)
 	void WAVAudioInstance::BufferNeeded(DirectX::DynamicSoundEffectInstance* instance)
-	{
+	{		
 		//Get the target buffer size
-		uint32_t targetBufferSize = 5*PlaybackSpeedMultiplier * FormatChunk.ByteRate;
+		//If the byte rate is 176400 and a max number of buffers is 5, then 2048*3/176400 = 0.05 seconds (pretty good buffer sizing for latency, don't hear crackling either)
+		//Multiplying by PlaybackSpeed so the buffers can keep up without crackle (might cause latency, check later)
+		uint32_t targetBufferSize = 2048*PlaybackSpeedMultiplier;
 
-		//Choose the minimum of the target buffer size and the actual remaining amount of data in the chunk
-		uint32_t bufferSize = std::min(targetBufferSize, DataChunkSize - DataChunkCurrentIndex);
-
-		//Submit buffer
-		instance->SubmitBuffer(&DataChunkFileMappingPointer[DataChunkCurrentIndex], bufferSize);
-
-		//Increment the current index by the buffer submitted
-		DataChunkCurrentIndex += bufferSize;
-
-		//If we got to the end of the data segment, reset the index to the beginning if it is loop
-		if (DataChunkCurrentIndex == DataChunkSize && IsLoop)
+		//This while loop ensures all the buffers needed are given at one time and the callback doesn't have to constantly be called killing performance
+		while (!StopLoadingBuffers && instance->GetState() == DirectX::PLAYING && instance->GetPendingBufferCount() <= MAX_BUFFERS)
 		{
-			DataChunkCurrentIndex = 0;
-		}
+			//Choose the minimum of the target buffer size and the actual remaining amount of data in the chunk
+			uint32_t bufferSize = std::min(targetBufferSize, FileInfo.DataChunkSize - DataChunkCurrentIndex);
 
-		else if (DataChunkCurrentIndex == DataChunkSize && !IsLoop)
-		{
-			this->Stop();
-		}
-	}
-	
-	bool WAVAudioInstance::IsCorrectFourCC(const char* chunkFourCC, const char* correctFourCC) const
-	{
-		for (int index = 0; index < 4; index++)
-		{
-			if (chunkFourCC[index] != correctFourCC[index])
+			//Submit buffer
+			instance->SubmitBuffer(&DataChunkFileMappingPointer[DataChunkCurrentIndex], bufferSize);
+
+			//Increment the current index by the buffer submitted
+			DataChunkCurrentIndex += bufferSize;
+
+			//If we got to the end of the data segment, reset the index to the beginning if it is loop
+			if (DataChunkCurrentIndex == FileInfo.DataChunkSize && IsLoop)
 			{
-				return false;
+				DataChunkCurrentIndex = 0;
+			}
+
+			else if (DataChunkCurrentIndex == FileInfo.DataChunkSize && !IsLoop)
+			{
+				StopLoadingBuffers = false;
 			}
 		}
 
-		return true;
+		if (StopLoadingBuffers && instance->GetPendingBufferCount() == 0)
+		{
+			this->Stop();
+		}
 	}
 }
