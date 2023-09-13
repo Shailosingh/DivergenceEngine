@@ -34,7 +34,6 @@ namespace DivergenceEngine
 		DWORD granularity = systemInfo.dwAllocationGranularity;
 		DWORD fileMapStart = static_cast<DWORD>(FileInfo.DataChunkOffsetInFile / granularity) * granularity;
 		DWORD fileViewSize = static_cast<DWORD>(FileInfo.DataChunkOffsetInFile % granularity) + FileInfo.DataChunkSize;
-		DWORD fileMapSize = static_cast<DWORD>(FileInfo.DataChunkOffsetInFile + FileInfo.DataChunkSize);
 		DWORD viewDelta = FileInfo.DataChunkOffsetInFile - fileMapStart;
 
 		//Memory map the data chunk
@@ -59,7 +58,7 @@ namespace DivergenceEngine
 			NULL,
 			PAGE_READONLY,
 			0,
-			fileMapSize,
+			fileViewSize,
 			NULL
 		);
 		if (FileMappingHandle == NULL)
@@ -138,6 +137,12 @@ namespace DivergenceEngine
 		{
 			assert(false);
 			throw std::invalid_argument("WAVAudioInstance::SetPlaybackSpeedMultiplier() - newPlaybackSpeedMultiplier cannot be 0");
+		}
+
+		//If the new playback speed is unchanged, do nothing
+		if (PlaybackSpeedMultiplier == newPlaybackSpeedMultiplier)
+		{
+			return;
 		}
 		
 		//Check if the song is already playing and if it was looping
