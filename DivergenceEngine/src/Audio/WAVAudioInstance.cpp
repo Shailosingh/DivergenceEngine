@@ -156,10 +156,12 @@ namespace DivergenceEngine
 			FileInfo.FormatChunk.SampleRate * PlaybackSpeedMultiplier,
 			FileInfo.FormatChunk.NumChannels,
 			FileInfo.FormatChunk.BitsPerSample);
+		
+		this->Play(IsLoop);
 
-		if (isPlaying)
+		if (!isPlaying)
 		{
-			this->Play(IsLoop);
+			this->Pause();
 		}
 	}
 

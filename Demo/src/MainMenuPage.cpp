@@ -114,7 +114,21 @@ void MainMenuPage::UpdatePage(const DX::StepTimer& timer)
 		case '2':
 			BackgroundMusic->SetPlaybackSpeedMultiplier(2);
 			break;
-		}
+
+		//Space key
+		case VK_SPACE:
+			if (IsMusicPlaying)
+			{
+				BackgroundMusic->Pause();
+			}
+
+			else
+			{
+				BackgroundMusic->Resume();
+			}
+			IsMusicPlaying = !IsMusicPlaying;
+			break;
+		}		
 	}
 }
 

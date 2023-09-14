@@ -7,6 +7,7 @@ private:
 	//Datafields
 	DivergenceEngine::Window* WindowReference;
 	std::unique_ptr<DivergenceEngine::IAudioInstance> BackgroundMusic;
+	bool IsMusicPlaying = true;
 
 	//Menu callback functions
 	void Menu_Start();
