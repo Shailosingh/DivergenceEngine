@@ -92,6 +92,7 @@
     <ClInclude Include="src\Audio\ISimpleSoundEffect.h" />
     <ClInclude Include="src\Audio\WAVAudioInstance.h" />
     <ClInclude Include="src\Audio\WAVFileReader.h" />
+    <ClInclude Include="src\Audio\WAVSimpleSoundEffect.h" />
     <ClInclude Include="src\DivergenceEngine.h" />
     <ClInclude Include="src\DXComErrorHandler.h" />
     <ClInclude Include="src\Fonts\Fonts.h" />
@@ -114,6 +115,7 @@
     <ClCompile Include="src\Application\Application.cpp" />
     <ClCompile Include="src\Audio\WAVAudioInstance.cpp" />
     <ClCompile Include="src\Audio\WAVFileReader.cpp" />
+    <ClCompile Include="src\Audio\WAVSimpleSoundEffect.cpp" />
     <ClCompile Include="src\DXComErrorHandler.cpp" />
     <ClCompile Include="src\Graphics\Graphics.cpp" />
     <ClCompile Include="src\Logger\Logger.cpp" />

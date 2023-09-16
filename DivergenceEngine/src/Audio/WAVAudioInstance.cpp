@@ -9,7 +9,7 @@ namespace fs = std::filesystem;
 
 namespace DivergenceEngine
 {
-	WAVAudioInstance::WAVAudioInstance(DirectX::AudioEngine* engine, std::wstring filePath, uint8_t initialPlaybackSpeedMultiplier)
+	WAVAudioInstance::WAVAudioInstance(DirectX::AudioEngine* engine, std::wstring filePath, uint8_t initialPlaybackSpeedMultiplier, float initialVolume)
 	{
 		//Handle invalid parameters
 		if (engine == nullptr)
@@ -23,6 +23,11 @@ namespace DivergenceEngine
 			throw std::invalid_argument("WAVAudioInstance::WAVAudioInstance() - initialPlaybackSpeedMultiplier cannot be 0");
 		}
 		PlaybackSpeedMultiplier = initialPlaybackSpeedMultiplier;
+
+		if (initialVolume > 1 || initialVolume < 0)
+		{
+			throw std::invalid_argument("WAVAudioInstance::WAVAudioInstance() - initialVolume must be between 0 and 1");
+		}
 		
 		//Read the WAV file header info
 		FileInfo = WAVFileReader::ReadWAVFile(filePath);
@@ -91,6 +96,9 @@ namespace DivergenceEngine
 			FileInfo.FormatChunk.SampleRate*PlaybackSpeedMultiplier,
 			FileInfo.FormatChunk.NumChannels,
 			FileInfo.FormatChunk.BitsPerSample);
+
+		//Set the volume
+		SoundEffectInstance->SetVolume(initialVolume);
 	}
 
 	WAVAudioInstance::~WAVAudioInstance()
@@ -127,6 +135,11 @@ namespace DivergenceEngine
 
 	void WAVAudioInstance::SetVolume(float volume)
 	{
+		if(volume > 1 || volume < 0)
+		{
+			throw std::invalid_argument("WAVAudioInstance::SetVolume() - volume must be between 0 and 1");
+		}
+
 		SoundEffectInstance->SetVolume(volume);
 	}
 
@@ -149,6 +162,7 @@ namespace DivergenceEngine
 		bool isPlaying = SoundEffectInstance->GetState() == DirectX::SoundState::PLAYING;
 		
 		//Reset the instance with the altered sample rate based on the new playback speed multiplier
+		this->Pause();
 		PlaybackSpeedMultiplier = newPlaybackSpeedMultiplier;
 		SoundEffectInstance = std::make_unique<DirectX::DynamicSoundEffectInstance>(
 			EnginePointer,

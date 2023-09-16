@@ -10,6 +10,9 @@ void MainMenuPage::Initialize(DivergenceEngine::Window* windowReference)
 	//Load background music
 	BackgroundMusic = std::make_unique<DivergenceEngine::WAVAudioInstance>(WindowReference->AudioController.get(), L"Audio\\MainMenu.wav", 1);
 	BackgroundMusic->Play(true);
+
+	//Load the menu sound effect
+	MenuSoundEffect = std::make_unique<DivergenceEngine::WAVSimpleSoundEffect>(WindowReference->AudioController.get(), L"Audio\\Click.wav");
 	
 	//Load image on foreground
 	std::shared_ptr<Image> menuSplash = std::make_shared<Image>(L"Images\\MainMenuPage\\TITLE.png", WindowReference->GraphicsController, DirectX::SimpleMath::Vector2(0, 0));
@@ -135,26 +138,28 @@ void MainMenuPage::UpdatePage(const DX::StepTimer& timer)
 //Menu Callback Functions----------------------------------------------------------
 void MainMenuPage::Menu_Start()
 {
+	MenuSoundEffect->Play();
 	WindowReference->QueueNewPage(std::make_unique<TypableTitlePage>());
 }
 
 void MainMenuPage::Menu_Load()
 {
-
+	MenuSoundEffect->Play();
 }
 
 void MainMenuPage::Menu_Replay()
 {
-
+	MenuSoundEffect->Play();
 }
 
 void MainMenuPage::Menu_Options()
 {
-	
+	MenuSoundEffect->Play();
 }
 
 void MainMenuPage::Menu_Exit()
 {
+	MenuSoundEffect->Play();
 	DivergenceEngine::Logger::Log(L"Exit Button Selected");
 	PostMessage(WindowReference->GetHandle(), WM_CLOSE, 0, 0);
 }

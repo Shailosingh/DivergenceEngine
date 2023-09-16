@@ -5,8 +5,9 @@ class MainMenuPage : public DivergenceEngine::IPage
 {
 private:
 	//Datafields
-	DivergenceEngine::Window* WindowReference;
+	DivergenceEngine::Window* WindowReference = nullptr;
 	std::unique_ptr<DivergenceEngine::IAudioInstance> BackgroundMusic;
+	std::unique_ptr<DivergenceEngine::ISimpleSoundEffect> MenuSoundEffect;
 	bool IsMusicPlaying = true;
 
 	//Menu callback functions

@@ -42,7 +42,7 @@ namespace DivergenceEngine
 		
 	public:
 		//Constructors and destructors
-		WAVAudioInstance(DirectX::AudioEngine* engine, std::wstring filePath, uint8_t initialPlaybackSpeedMultiplier = 1);
+		WAVAudioInstance(DirectX::AudioEngine* engine, std::wstring filePath, uint8_t initialPlaybackSpeedMultiplier = 1, float initialVolume = 1);
 		~WAVAudioInstance();
 
 		//Overriden functions

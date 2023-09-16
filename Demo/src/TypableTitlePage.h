@@ -5,7 +5,7 @@ class TypableTitlePage : public DivergenceEngine::IPage
 {
 private:
 	//Datafields
-	DivergenceEngine::Window* WindowReference;
+	DivergenceEngine::Window* WindowReference = nullptr;
 	
 	//Private helpers
 	void UpdateWindowTitle(WPARAM characterCode);
