@@ -289,8 +289,8 @@ namespace DivergenceEngine
 			//Clear out all remaining drawables old page on screen
 			ClearAllLayers();
 
-			//Suspend the audio
-			AudioController->Suspend();
+			//Reset the audio
+			AudioController->Reset();
 			
 			PageReference = std::move(QueuedPage);
 			QueuedPage = nullptr;

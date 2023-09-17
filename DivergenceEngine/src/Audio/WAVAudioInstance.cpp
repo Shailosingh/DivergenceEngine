@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <fstream>
 #include "StringConverter.h"
+#include "Logger/Logger.h"
 
 namespace fs = std::filesystem;
 
@@ -99,6 +100,8 @@ namespace DivergenceEngine
 
 		//Set the volume
 		SoundEffectInstance->SetVolume(initialVolume);
+
+		Logger::Log(std::format(L"Loaded {}", FileInfo.FilePath));
 	}
 
 	WAVAudioInstance::~WAVAudioInstance()
@@ -109,6 +112,8 @@ namespace DivergenceEngine
 		UnmapViewOfFile(DataChunkFileMappingPointer);
 		CloseHandle(FileMappingHandle);
 		CloseHandle(FileHandle);
+
+		Logger::Log(std::format(L"Destroyed {}", FileInfo.FilePath));
 	}
 
 	void WAVAudioInstance::Play(bool isLoop)

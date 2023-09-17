@@ -6,6 +6,8 @@ namespace DivergenceEngine
 	class ISimpleSoundEffect
 	{
 	public:
+		virtual ~ISimpleSoundEffect() {}
+
 		virtual void Play() = 0;
 	};
 }

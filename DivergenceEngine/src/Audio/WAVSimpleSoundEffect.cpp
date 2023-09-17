@@ -1,4 +1,5 @@
 #include "Audio/WAVSimpleSoundEffect.h"
+#include "Logger/Logger.h"
 #include <filesystem>
 #include <memory>
 
@@ -27,6 +28,13 @@ namespace DivergenceEngine
 		CurrentVolume = initialVolume;
 
 		SimpleSoundEffect = std::make_unique<DirectX::SoundEffect>(engine, FilePath.c_str());
+
+		Logger::Log(std::format(L"Loaded {}", FilePath));
+	}
+
+	WAVSimpleSoundEffect::~WAVSimpleSoundEffect()
+	{
+		Logger::Log(std::format(L"Destroyed {}", FilePath));
 	}
 
 	void WAVSimpleSoundEffect::Play()

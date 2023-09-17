@@ -6,6 +6,8 @@ namespace DivergenceEngine
 	class IAudioInstance
 	{
 	public:
+		virtual ~IAudioInstance() {}
+
 		virtual void Play(bool isLoop = true) = 0;
 
 		virtual void Stop() = 0;

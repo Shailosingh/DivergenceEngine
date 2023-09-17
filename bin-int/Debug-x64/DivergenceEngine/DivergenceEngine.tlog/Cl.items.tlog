@@ -1,12 +1,13 @@
-C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\DivergenceEngine\src\Application\Application.cpp;C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\Application.obj
-C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\DivergenceEngine\src\Audio\WAVAudioInstance.cpp;C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\WAVAudioInstance.obj
-C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\DivergenceEngine\src\Audio\WAVFileReader.cpp;C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\WAVFileReader.obj
-C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\DivergenceEngine\src\DXComErrorHandler.cpp;C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\DXComErrorHandler.obj
-C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\DivergenceEngine\src\Graphics\Graphics.cpp;C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\Graphics.obj
-C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\DivergenceEngine\src\Logger\Logger.cpp;C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\Logger.obj
-C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\DivergenceEngine\src\Templates\ButtonMenu.cpp;C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\ButtonMenu.obj
-C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\DivergenceEngine\src\Templates\Image.cpp;C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\Image.obj
-C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\DivergenceEngine\src\Templates\InvisibleDrawable.cpp;C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\InvisibleDrawable.obj
-C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\DivergenceEngine\src\Window\Keyboard.cpp;C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\Keyboard.obj
-C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\DivergenceEngine\src\Window\Mouse.cpp;C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\Mouse.obj
-C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\DivergenceEngine\src\Window\Window.cpp;C:\Users\compu\Desktop\Code Projects\C++ Projects\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\Window.obj
+C:\Code Projects\C++\DivergenceEngine\DivergenceEngine\src\Application\Application.cpp;C:\Code Projects\C++\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\Application.obj
+C:\Code Projects\C++\DivergenceEngine\DivergenceEngine\src\Audio\WAVAudioInstance.cpp;C:\Code Projects\C++\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\WAVAudioInstance.obj
+C:\Code Projects\C++\DivergenceEngine\DivergenceEngine\src\Audio\WAVFileReader.cpp;C:\Code Projects\C++\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\WAVFileReader.obj
+C:\Code Projects\C++\DivergenceEngine\DivergenceEngine\src\Audio\WAVSimpleSoundEffect.cpp;C:\Code Projects\C++\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\WAVSimpleSoundEffect.obj
+C:\Code Projects\C++\DivergenceEngine\DivergenceEngine\src\DXComErrorHandler.cpp;C:\Code Projects\C++\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\DXComErrorHandler.obj
+C:\Code Projects\C++\DivergenceEngine\DivergenceEngine\src\Graphics\Graphics.cpp;C:\Code Projects\C++\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\Graphics.obj
+C:\Code Projects\C++\DivergenceEngine\DivergenceEngine\src\Logger\Logger.cpp;C:\Code Projects\C++\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\Logger.obj
+C:\Code Projects\C++\DivergenceEngine\DivergenceEngine\src\Templates\ButtonMenu.cpp;C:\Code Projects\C++\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\ButtonMenu.obj
+C:\Code Projects\C++\DivergenceEngine\DivergenceEngine\src\Templates\Image.cpp;C:\Code Projects\C++\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\Image.obj
+C:\Code Projects\C++\DivergenceEngine\DivergenceEngine\src\Templates\InvisibleDrawable.cpp;C:\Code Projects\C++\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\InvisibleDrawable.obj
+C:\Code Projects\C++\DivergenceEngine\DivergenceEngine\src\Window\Keyboard.cpp;C:\Code Projects\C++\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\Keyboard.obj
+C:\Code Projects\C++\DivergenceEngine\DivergenceEngine\src\Window\Mouse.cpp;C:\Code Projects\C++\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\Mouse.obj
+C:\Code Projects\C++\DivergenceEngine\DivergenceEngine\src\Window\Window.cpp;C:\Code Projects\C++\DivergenceEngine\bin-int\Debug-x64\DivergenceEngine\Window.obj
