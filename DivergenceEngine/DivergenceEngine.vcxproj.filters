@@ -96,6 +96,9 @@
     <ClInclude Include="src\Audio\AudioFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Audio\OGGAudioInstance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Logger\Logger.cpp">
@@ -135,6 +138,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Audio\WAVSimpleSoundEffect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Audio\OGGAudioInstance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
