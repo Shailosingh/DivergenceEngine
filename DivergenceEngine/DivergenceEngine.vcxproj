@@ -87,9 +87,11 @@
     <ClInclude Include="src\Application\Application.h" />
     <ClInclude Include="src\Application\EntryPoint.h" />
     <ClInclude Include="src\Application\StepTimer.h" />
+    <ClInclude Include="src\Audio\AudioFactory.h" />
     <ClInclude Include="src\Audio\AudioIncludes.h" />
     <ClInclude Include="src\Audio\IAudioInstance.h" />
     <ClInclude Include="src\Audio\ISimpleSoundEffect.h" />
+    <ClInclude Include="src\Audio\minivorbis.h" />
     <ClInclude Include="src\Audio\WAVAudioInstance.h" />
     <ClInclude Include="src\Audio\WAVFileReader.h" />
     <ClInclude Include="src\Audio\WAVSimpleSoundEffect.h" />
@@ -113,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application\Application.cpp" />
+    <ClCompile Include="src\Audio\minivorbis_imp.cpp" />
     <ClCompile Include="src\Audio\WAVAudioInstance.cpp" />
     <ClCompile Include="src\Audio\WAVFileReader.cpp" />
     <ClCompile Include="src\Audio\WAVSimpleSoundEffect.cpp" />
