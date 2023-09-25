@@ -153,7 +153,6 @@ namespace DivergenceEngine
 		//Ensure that the new playback speed multiplier is not 0
 		if (newPlaybackSpeedMultiplier == 0)
 		{
-			assert(false);
 			throw std::invalid_argument("WAVAudioInstance::SetPlaybackSpeedMultiplier() - newPlaybackSpeedMultiplier cannot be 0");
 		}
 
@@ -212,7 +211,7 @@ namespace DivergenceEngine
 
 			else if (DataChunkCurrentIndex == FileInfo.DataChunkSize && !IsLoop)
 			{
-				StopLoadingBuffers = false;
+				StopLoadingBuffers = true;
 			}
 		}
 

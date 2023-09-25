@@ -25,7 +25,7 @@ namespace DivergenceEngine
 		//Buffer variables
 		const int32_t MAX_BUFFERS = 5;
 		uint32_t DataChunkCurrentIndex;
-		bool StopLoadingBuffers = false;
+		bool StopLoadingBuffers = false; //This is necessary so, if the callback calls again after this is set to true, it does not try to load buffers again
 
 		//Memory mapped file datafields
 		HANDLE FileHandle;

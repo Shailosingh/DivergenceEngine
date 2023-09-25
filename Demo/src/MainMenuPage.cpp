@@ -8,7 +8,8 @@ void MainMenuPage::Initialize(DivergenceEngine::Window* windowReference)
 	WindowReference = windowReference;
 
 	//Load background music
-	BackgroundMusic = std::make_unique<DivergenceEngine::WAVAudioInstance>(WindowReference->AudioController.get(), L"Audio\\MainMenu.wav", 1);
+	//BackgroundMusic = std::make_unique<DivergenceEngine::WAVAudioInstance>(WindowReference->AudioController.get(), L"Audio\\MainMenu.wav", 1);
+	BackgroundMusic = std::make_unique<DivergenceEngine::OGGAudioInstance>(WindowReference->AudioController.get(), L"Audio\\MainMenu.ogg", 1);
 	BackgroundMusic->Play(true);
 
 	//Load the menu sound effect
