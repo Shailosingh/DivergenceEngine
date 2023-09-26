@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <format>
 #include <thread>
+#include <exception>
 
 //https://xiph.org/vorbis/doc/vorbisfile/overview.html
 //https://github.com/edubart/minivorbis
@@ -92,7 +93,7 @@ namespace DivergenceEngine
 		//Initialize the events
 		for (uint32_t index = 0; index < NUMBER_OF_EVENTS; index++)
 		{
-			BankLoadEventArray[index] = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+			BankLoadEventArray[index] = false;
 		}
 
 		//Start the thread
@@ -107,16 +108,10 @@ namespace DivergenceEngine
 		SoundEffectInstance->Pause();
 
 		//Signal the thread to be closed
-		SetEvent(BankLoadEventArray[THREAD_EXIT_EVENT_INDEX]);
+		BankLoadEventArray[THREAD_EXIT_EVENT_INDEX] = true;
 
 		//Wait for thread to close
 		BankLoadingThreadObject.join();
-
-		//Close all events
-		for (uint32_t index = 0; index < NUMBER_OF_EVENTS; index++)
-		{
-			CloseHandle(BankLoadEventArray[index]);
-		}
 
 		ov_clear(&VorbisFileObject);
 		Logger::Log(std::format(L"Destroyed {}", FilePath));
@@ -203,6 +198,7 @@ namespace DivergenceEngine
 
 		while (!StopLoadingBuffers && instance->GetState() == DirectX::PLAYING && instance->GetPendingBufferCount() <= MAX_BUFFERS)
 		{
+			//Submit the next buffer
 			long bufferSize = std::min(MAX_BUFFER_SIZE, TrueBankSizeArray[CurrentBankIndex] - CurrentBankDataIndex);
 			instance->SubmitBuffer(reinterpret_cast<uint8_t*>(&BankArray[CurrentBankIndex][CurrentBankDataIndex]), bufferSize);
 			CurrentBankDataIndex += bufferSize;
@@ -210,7 +206,7 @@ namespace DivergenceEngine
 			//If we are at the end of the bank, load the next bank in the currently expired bank and increase the bank index
 			if (CurrentBankDataIndex >= TrueBankSizeArray[CurrentBankIndex])
 			{
-				SetEvent(BankLoadEventArray[CurrentBankIndex]);
+				BankLoadEventArray[CurrentBankIndex] = true;
 
 				CurrentBankIndex = (CurrentBankIndex + 1) % NUMBER_OF_BANKS;
 				lock = std::unique_lock<std::mutex>(BankMutexArray[CurrentBankIndex]);
@@ -225,25 +221,38 @@ namespace DivergenceEngine
 		}
 	}
 
+	//https://github.com/dougbinks/enkiTS/issues/11
 	void OGGAudioInstance::BankLoadingThread()
 	{
 		while (true)
 		{
-			DWORD waitCode = WaitForMultipleObjects(NUMBER_OF_EVENTS, BankLoadEventArray.data(), FALSE, INFINITE);
+			//Search for a signal from the array of event booleans and get the index for the signal code
+			bool searchingForSignal = true;
+			uint32_t signalCode = THREAD_EXIT_EVENT_INDEX;
+			while (searchingForSignal)
+			{
+				Sleep(500);
+
+				for (uint32_t index = 0; index < NUMBER_OF_EVENTS; index++)
+				{
+					if (BankLoadEventArray[index])
+					{
+						signalCode = index;
+						BankLoadEventArray[index] = false;
+						searchingForSignal = false;
+						break;
+					}
+				}
+			}
 
 			//If the thread is signaled to exit, exit
-			if (waitCode == WAIT_OBJECT_0 + THREAD_EXIT_EVENT_INDEX)
+			if (signalCode == THREAD_EXIT_EVENT_INDEX)
 			{
 				break;
 			}
-			
-			DWORD bankIndex = waitCode - WAIT_OBJECT_0;
 
-			//Ensure the index is in the correct range and load bank if so
-			if (bankIndex < NUMBER_OF_BANKS)
-			{
-				LoadBank(bankIndex);
-			}
+			//If it has made it here, the signal is to load a new bank
+			LoadBank(signalCode);
 		}
 
 		ThreadIsRunning = false;
@@ -253,7 +262,7 @@ namespace DivergenceEngine
 	{
 		//Lock the bank
 		std::lock_guard<std::mutex> lock(BankMutexArray[bankIndex]);
-		Logger::Log(L"Begin loading bank");
+		Logger::Log(std::format(L"Begin loading bank {}", bankIndex));
 
 		//Fill the bank until it is either full or the file is finished and loop is disabled
 		TrueBankSizeArray[bankIndex] = 0;
@@ -281,6 +290,6 @@ namespace DivergenceEngine
 				TrueBankSizeArray[bankIndex] += currentBytesRead;
 			}
 		}
-		Logger::Log(L"Finish loading bank");
+		Logger::Log(std::format(L"Finished loading bank {}", bankIndex));
 	}
 }

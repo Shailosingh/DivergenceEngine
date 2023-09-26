@@ -5,6 +5,7 @@
 #include <vector>
 #include <mutex>
 #include <Windows.h>
+#include <atomic>
 
 namespace DivergenceEngine
 {
@@ -19,7 +20,7 @@ namespace DivergenceEngine
 
 		//Buffer variables
 		const static uint32_t MAX_BUFFERS = 5;
-		const static long MAX_BUFFER_SIZE = 16 * 1024;
+		const static long MAX_BUFFER_SIZE = 4 * 1024;
 		const static uint32_t NUMBER_OF_BANKS = 2;
 		const static uint32_t NUMBER_OF_EVENTS = NUMBER_OF_BANKS + 1;
 		const static uint32_t THREAD_EXIT_EVENT_INDEX = NUMBER_OF_EVENTS - 1;
@@ -31,7 +32,7 @@ namespace DivergenceEngine
 		std::array<std::array<uint8_t, MAX_BANK_SIZE>, NUMBER_OF_BANKS> BankArray;
 		std::array<long, NUMBER_OF_BANKS> TrueBankSizeArray;
 		std::array<std::mutex, NUMBER_OF_BANKS> BankMutexArray;
-		std::array<HANDLE, NUMBER_OF_EVENTS> BankLoadEventArray;
+		std::array<std::atomic<bool>, NUMBER_OF_EVENTS> BankLoadEventArray;
 		std::thread BankLoadingThreadObject;
 
 		//Buffer functions
