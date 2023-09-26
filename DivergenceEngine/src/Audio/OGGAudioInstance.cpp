@@ -1,9 +1,12 @@
+#define NOMINMAX
 #include "Audio/IAudioInstance.h"
 #include "Audio/OGGAudioInstance.h"
 #include "Logger/Logger.h"
+#include <algorithm>
 #include <stdexcept>
 #include <stdio.h>
 #include <format>
+#include <thread>
 
 //https://xiph.org/vorbis/doc/vorbisfile/overview.html
 //https://github.com/edubart/minivorbis
@@ -80,12 +83,41 @@ namespace DivergenceEngine
 		//Set the volume
 		SoundEffectInstance->SetVolume(initialVolume);
 
+		//Load all banks
+		for (uint32_t index = 0; index < NUMBER_OF_BANKS; index++)
+		{
+			LoadBank(index);
+		}
+
+		//Initialize the events
+		for (uint32_t index = 0; index < NUMBER_OF_EVENTS; index++)
+		{
+			BankLoadEventArray[index] = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+		}
+
+		//Start the thread
+		ThreadIsRunning = true;
+		BankLoadingThreadObject = std::thread(&OGGAudioInstance::BankLoadingThread, this);
+
 		Logger::Log(std::format(L"Loaded {}", FilePath));
 	}
 
 	OGGAudioInstance::~OGGAudioInstance()
 	{
 		SoundEffectInstance->Pause();
+
+		//Signal the thread to be closed
+		SetEvent(BankLoadEventArray[THREAD_EXIT_EVENT_INDEX]);
+
+		//Wait for thread to close
+		BankLoadingThreadObject.join();
+
+		//Close all events
+		for (uint32_t index = 0; index < NUMBER_OF_EVENTS; index++)
+		{
+			CloseHandle(BankLoadEventArray[index]);
+		}
+
 		ov_clear(&VorbisFileObject);
 		Logger::Log(std::format(L"Destroyed {}", FilePath));
 	}
@@ -160,85 +192,95 @@ namespace DivergenceEngine
 
 	void OGGAudioInstance::BufferNeeded(DirectX::DynamicSoundEffectInstance* instance)
 	{
-		uint32_t targetBufferSize = 32768 * PlaybackSpeedMultiplier;
-		int logicalBitstream = 0;
+		//Lock the current bank
+		std::unique_lock<std::mutex> lock(BankMutexArray[CurrentBankIndex]);
 
-		//https://irrlicht.sourceforge.io/forum/viewtopic.php?p=302464
-		//https://xiph.org/vorbis/doc/vorbisfile/decoding.html (Use loop to iteratively fill buffer until it is max)
-		//LOAD 1 MiB (1,048,576 byte) BANKS OF DATA AT A TIME AND THEN FEED 4096 BYTE CHUNKS OF IT TO THE INSTANCE SLOWLY. Have two banks, one that is being filled in a worker thread and one that is being used.
-		while (!StopLoadingBuffers && instance->GetState() == DirectX::PLAYING && instance->GetPendingBufferCount() < MAX_BUFFERS)
+		//If the bank has 0 size, the file must be over
+		if (TrueBankSizeArray[CurrentBankIndex] == 0)
 		{
-			//Get the number of new buffers to fill
-			uint32_t numBuffersToFill = MAX_BUFFERS - instance->GetPendingBufferCount();
+			StopLoadingBuffers = true;
+		}
 
-			//Cycle through each of the eaten buffers and fill them
-			for (size_t index = 0; index < numBuffersToFill; index++)
+		while (!StopLoadingBuffers && instance->GetState() == DirectX::PLAYING && instance->GetPendingBufferCount() <= MAX_BUFFERS)
+		{
+			long bufferSize = std::min(MAX_BUFFER_SIZE, TrueBankSizeArray[CurrentBankIndex] - CurrentBankDataIndex);
+			instance->SubmitBuffer(reinterpret_cast<uint8_t*>(&BankArray[CurrentBankIndex][CurrentBankDataIndex]), bufferSize);
+			CurrentBankDataIndex += bufferSize;
+
+			//If we are at the end of the bank, load the next bank in the currently expired bank and increase the bank index
+			if (CurrentBankDataIndex >= TrueBankSizeArray[CurrentBankIndex])
 			{
-				Buffers[index].resize(targetBufferSize);
+				SetEvent(BankLoadEventArray[CurrentBankIndex]);
 
-				//Fill in buffer
-				long actualBytesRead = 0;
-				while (actualBytesRead < targetBufferSize)
-				{
-					long currentByteRead = ov_read(&VorbisFileObject, reinterpret_cast<char*>(Buffers[index].data()) + actualBytesRead, targetBufferSize - actualBytesRead, 0, BIT_DEPTH / 8, 1, &logicalBitstream);
-					actualBytesRead += currentByteRead;
+				CurrentBankIndex = (CurrentBankIndex + 1) % NUMBER_OF_BANKS;
+				lock = std::unique_lock<std::mutex>(BankMutexArray[CurrentBankIndex]);
 
-					//If the actual bytes read is 0, then the end of the file has been reached
-					if (currentByteRead == 0)
-					{
-						//If the song is looping, seek to the beginning of the file
-						if (IsLoop)
-						{
-							ov_pcm_seek(&VorbisFileObject, 0);
-						}
-
-						else
-						{
-							StopLoadingBuffers = true;
-							break;
-						}
-					}
-				}
-
-				//Submit the buffer
-				instance->SubmitBuffer(Buffers[index].data(), actualBytesRead);
-
-				if (StopLoadingBuffers)
-				{
-					break;
-				}
-
-				/*
-				//Fill in buffer
-				Buffers[index].resize(targetBufferSize);
-				long actualBytesRead = ov_read(&VorbisFileObject, reinterpret_cast<char*>(Buffers[index].data()), targetBufferSize, 0, BIT_DEPTH / 8, 1, &logicalBitstream);
-
-				//Submit the buffer
-				instance->SubmitBuffer(Buffers[index].data(), actualBytesRead);
-
-				//If the actual bytes read is 0, then the end of the file has been reached
-				if (actualBytesRead == 0)
-				{
-					//If the song is looping, seek to the beginning of the file
-					if (IsLoop)
-					{
-						ov_pcm_seek(&VorbisFileObject, 0);
-					}
-
-					else
-					{
-						StopLoadingBuffers = true;
-						break;
-					}
-				}
-				*/
+				CurrentBankDataIndex = 0;
 			}
 		}
 
-		//If the song has stopped loading buffers and there are no new buffers, stop the song
 		if (StopLoadingBuffers && instance->GetPendingBufferCount() == 0)
 		{
 			this->Stop();
 		}
+	}
+
+	void OGGAudioInstance::BankLoadingThread()
+	{
+		while (true)
+		{
+			DWORD waitCode = WaitForMultipleObjects(NUMBER_OF_EVENTS, BankLoadEventArray.data(), FALSE, INFINITE);
+
+			//If the thread is signaled to exit, exit
+			if (waitCode == WAIT_OBJECT_0 + THREAD_EXIT_EVENT_INDEX)
+			{
+				break;
+			}
+			
+			DWORD bankIndex = waitCode - WAIT_OBJECT_0;
+
+			//Ensure the index is in the correct range and load bank if so
+			if (bankIndex < NUMBER_OF_BANKS)
+			{
+				LoadBank(bankIndex);
+			}
+		}
+
+		ThreadIsRunning = false;
+	}
+
+	void OGGAudioInstance::LoadBank(uint32_t bankIndex)
+	{
+		//Lock the bank
+		std::lock_guard<std::mutex> lock(BankMutexArray[bankIndex]);
+		Logger::Log(L"Begin loading bank");
+
+		//Fill the bank until it is either full or the file is finished and loop is disabled
+		TrueBankSizeArray[bankIndex] = 0;
+		while (TrueBankSizeArray[bankIndex] < MAX_BANK_SIZE)
+		{
+			long currentBytesRead = ov_read(&VorbisFileObject, reinterpret_cast<char*>(&BankArray[bankIndex][TrueBankSizeArray[bankIndex]]), MAX_BANK_SIZE - TrueBankSizeArray[bankIndex], 0, BIT_DEPTH / 8, 1, nullptr);
+
+			//If the read results in a 0 return, then the end of the file has been reached
+			if (currentBytesRead == 0)
+			{
+				//If the song is looping, seek to the beginning of the file
+				if (IsLoop)
+				{
+					ov_pcm_seek(&VorbisFileObject, 0);
+				}
+
+				else
+				{
+					return;
+				}
+			}
+			
+			else if (currentBytesRead > 0)
+			{
+				TrueBankSizeArray[bankIndex] += currentBytesRead;
+			}
+		}
+		Logger::Log(L"Finish loading bank");
 	}
 }
