@@ -8,6 +8,6 @@ namespace DivergenceEngine
 	public:
 		virtual ~ISimpleSoundEffect() {}
 
-		virtual void Play() = 0;
+		virtual void Play(float volume = 1) = 0;
 	};
 }

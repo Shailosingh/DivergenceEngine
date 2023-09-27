@@ -7,7 +7,7 @@ namespace fs = std::filesystem;
 
 namespace DivergenceEngine
 {
-	WAVSimpleSoundEffect::WAVSimpleSoundEffect(DirectX::AudioEngine* engine, const std::wstring& filePath, float initialVolume)
+	WAVSimpleSoundEffect::WAVSimpleSoundEffect(DirectX::AudioEngine* engine, const std::wstring& filePath)
 	{
 		//Validate arguments
 		if(engine == nullptr)
@@ -21,12 +21,6 @@ namespace DivergenceEngine
 		}
 		FilePath = filePath;
 
-		if(initialVolume < 0 || initialVolume > 1)
-		{
-			throw std::invalid_argument("WAVSimpleSoundEffect::WAVSimpleSoundEffect() - initialVolume is not in range [0, 1]");
-		}
-		CurrentVolume = initialVolume;
-
 		SimpleSoundEffect = std::make_unique<DirectX::SoundEffect>(engine, FilePath.c_str());
 
 		Logger::Log(std::format(L"Loaded {}", FilePath));
@@ -37,8 +31,13 @@ namespace DivergenceEngine
 		Logger::Log(std::format(L"Destroyed {}", FilePath));
 	}
 
-	void WAVSimpleSoundEffect::Play()
+	void WAVSimpleSoundEffect::Play(float volume)
 	{
-		SimpleSoundEffect->Play(CurrentVolume, 0, 0);
+		if (volume < 0 || volume > 1)
+		{
+			throw std::invalid_argument("WAVSimpleSoundEffect::Play() - volume is not in range [0, 1]");
+		}
+
+		SimpleSoundEffect->Play(volume, 0, 0);
 	}
 }

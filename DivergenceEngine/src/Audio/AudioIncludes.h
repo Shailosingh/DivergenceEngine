@@ -5,3 +5,4 @@
 
 #include "Audio/ISimpleSoundEffect.h"
 #include "Audio/WAVSimpleSoundEffect.h"
+#include "Audio/OGGSimpleSoundEffect.h"

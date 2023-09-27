@@ -92,6 +92,7 @@
     <ClInclude Include="src\Audio\IAudioInstance.h" />
     <ClInclude Include="src\Audio\ISimpleSoundEffect.h" />
     <ClInclude Include="src\Audio\OGGAudioInstance.h" />
+    <ClInclude Include="src\Audio\OGGSimpleSoundEffect.h" />
     <ClInclude Include="src\Audio\WAVAudioInstance.h" />
     <ClInclude Include="src\Audio\WAVFileReader.h" />
     <ClInclude Include="src\Audio\WAVSimpleSoundEffect.h" />
@@ -116,6 +117,7 @@
   <ItemGroup>
     <ClCompile Include="src\Application\Application.cpp" />
     <ClCompile Include="src\Audio\OGGAudioInstance.cpp" />
+    <ClCompile Include="src\Audio\OGGSimpleSoundEffect.cpp" />
     <ClCompile Include="src\Audio\WAVAudioInstance.cpp" />
     <ClCompile Include="src\Audio\WAVFileReader.cpp" />
     <ClCompile Include="src\Audio\WAVSimpleSoundEffect.cpp" />

@@ -8,13 +8,12 @@ namespace DivergenceEngine
 	private:
 		std::unique_ptr<DirectX::SoundEffect> SimpleSoundEffect;
 		std::wstring FilePath;
-		float CurrentVolume;
 
 	public:
-		WAVSimpleSoundEffect(DirectX::AudioEngine* engine, const std::wstring& filePath, float initialVolume = 1);
+		WAVSimpleSoundEffect(DirectX::AudioEngine* engine, const std::wstring& filePath);
 		~WAVSimpleSoundEffect();
 
 		//Overriden functions
-		void Play() override;
+		void Play(float volume = 1) override;
 	};
 }

@@ -222,6 +222,7 @@ namespace DivergenceEngine
 	}
 
 	//https://github.com/dougbinks/enkiTS/issues/11
+	//Consider replacing atomic bools with either semaphores or manual reset events
 	void OGGAudioInstance::BankLoadingThread()
 	{
 		while (true)

@@ -13,7 +13,7 @@ void MainMenuPage::Initialize(DivergenceEngine::Window* windowReference)
 	BackgroundMusic->Play(true);
 
 	//Load the menu sound effect
-	MenuSoundEffect = std::make_unique<DivergenceEngine::WAVSimpleSoundEffect>(WindowReference->AudioController.get(), L"Audio\\Click.wav");
+	MenuSoundEffect = std::make_unique<DivergenceEngine::OGGSimpleSoundEffect>(WindowReference->AudioController.get(), L"Audio\\Click.ogg");
 	
 	//Load image on foreground
 	std::shared_ptr<Image> menuSplash = std::make_shared<Image>(L"Images\\MainMenuPage\\TITLE.png", WindowReference->GraphicsController, DirectX::SimpleMath::Vector2(0, 0));
