@@ -20,7 +20,7 @@ namespace DivergenceEngine
 
 		//Buffer variables
 		const static uint32_t MAX_BUFFERS = 5;
-		const static long MAX_BUFFER_SIZE = 4 * 1024;
+		const static long MAX_BUFFER_SIZE = 2 * 1024;
 		const static uint32_t NUMBER_OF_BANKS = 2;
 		const static uint32_t NUMBER_OF_EVENTS = NUMBER_OF_BANKS + 1;
 		const static uint32_t THREAD_EXIT_EVENT_INDEX = NUMBER_OF_EVENTS - 1;

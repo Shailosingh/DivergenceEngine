@@ -263,7 +263,7 @@ namespace DivergenceEngine
 	{
 		//Lock the bank
 		std::lock_guard<std::mutex> lock(BankMutexArray[bankIndex]);
-		Logger::Log(std::format(L"Begin loading bank {}", bankIndex));
+		//Logger::Log(std::format(L"Begin loading bank {}", bankIndex));
 
 		//Fill the bank until it is either full or the file is finished and loop is disabled
 		TrueBankSizeArray[bankIndex] = 0;
@@ -291,6 +291,6 @@ namespace DivergenceEngine
 				TrueBankSizeArray[bankIndex] += currentBytesRead;
 			}
 		}
-		Logger::Log(std::format(L"Finished loading bank {}", bankIndex));
+		//Logger::Log(std::format(L"Finished loading bank {}", bankIndex));
 	}
 }
