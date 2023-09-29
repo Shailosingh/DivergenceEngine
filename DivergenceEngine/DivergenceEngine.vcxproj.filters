@@ -60,7 +60,7 @@
     <ClInclude Include="src\Window\IPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Fonts\Fonts.h">
+    <ClInclude Include="src\Fonts\DefaultFonts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Templates\UnclickableDrawable.h">
@@ -152,5 +152,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="src\Fonts\FontFiles\M PLUS 1 (Size_24).spritefont" />
   </ItemGroup>
 </Project>

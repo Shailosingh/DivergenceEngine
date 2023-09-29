@@ -98,7 +98,7 @@
     <ClInclude Include="src\Audio\WAVSimpleSoundEffect.h" />
     <ClInclude Include="src\DivergenceEngine.h" />
     <ClInclude Include="src\DXComErrorHandler.h" />
-    <ClInclude Include="src\Fonts\Fonts.h" />
+    <ClInclude Include="src\Fonts\DefaultFonts.h" />
     <ClInclude Include="src\Globals.h" />
     <ClInclude Include="src\Graphics\Graphics.h" />
     <ClInclude Include="src\StringConverter.h" />
@@ -133,6 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="src\Fonts\FontFiles\M PLUS 1 (Size_24).spritefont" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

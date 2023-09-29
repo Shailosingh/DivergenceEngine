@@ -7,6 +7,8 @@
 #include <string>
 #include <SpriteBatch.h> //TODO: Implement functions to use this
 #include <CommonStates.h>
+#include <SpriteFont.h>
+#include "Fonts/DefaultFonts.h"
 
 namespace DivergenceEngine
 {
@@ -53,6 +55,10 @@ namespace DivergenceEngine
 		//Texture loaders
 		void LoadTexture(std::wstring filePath, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& texture, CD3D11_TEXTURE2D_DESC&  textureDescription);
 		void LoadTexture(std::wstring filePath, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& texture);
+
+		//Font loaders
+		void LoadFont(std::wstring spriteFontPath, std::unique_ptr<DirectX::SpriteFont>& spriteFont);
+		void LoadFont(DefaultFonts::DefaultFontIndices defaultFontIndex, std::unique_ptr<DirectX::SpriteFont>& spriteFont);
 
 		//Getters
 		DirectX::XMINT2 GetBufferSize() const noexcept;

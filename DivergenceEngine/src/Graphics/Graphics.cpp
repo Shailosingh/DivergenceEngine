@@ -194,6 +194,22 @@ namespace DivergenceEngine
 		DX::ThrowIfFailed(DirectX::CreateWICTextureFromFile(DevicePointer.Get(), filePath.c_str(), nullptr, &texture));
 	}
 
+	//Font Loader----------------------------------------------------------------------------------
+	void Graphics::LoadFont(std::wstring spriteFontPath, std::unique_ptr<DirectX::SpriteFont>& spriteFont)
+	{
+		spriteFont = std::make_unique<DirectX::SpriteFont>(DevicePointer.Get(), spriteFontPath.c_str());
+	}
+
+	void Graphics::LoadFont(DefaultFonts::DefaultFontIndices defaultFontIndex, std::unique_ptr<DirectX::SpriteFont>& spriteFont)
+	{
+		if (defaultFontIndex == DefaultFonts::DefaultFontIndices::TOTAL_DEFAULT_FONTS)
+		{
+			throw std::invalid_argument("Graphics::LoadFont() Invalid defaultFontIndex");
+		}
+
+		spriteFont = std::make_unique<DirectX::SpriteFont>(DevicePointer.Get(), DefaultFonts::FontPaths[static_cast<size_t>(defaultFontIndex)].c_str());
+	}
+
 	//Helpers--------------------------------------------------------------------------------------
 	void Graphics::BeginSpriteBatch() noexcept
 	{
