@@ -5,10 +5,19 @@
 #include <wrl.h>
 #include <SimpleMath.h>
 #include <string>
-#include <SpriteBatch.h> //TODO: Implement functions to use this
+#include <SpriteBatch.h> 
 #include <CommonStates.h>
 #include <SpriteFont.h>
 #include "Fonts/DefaultFonts.h"
+
+/*
+Video playback links:
+
+https://github.com/yabadabu/dx11_video_texture
+https://github.com/microsoft/Windows-classic-samples/tree/main/Samples/DX11VideoRenderer
+https://learn.microsoft.com/en-us/windows/win32/medfound/direct3d-11-video-apis
+*/
+
 
 namespace DivergenceEngine
 {
@@ -51,6 +60,12 @@ namespace DivergenceEngine
 		//Sprite batch functions
 		void DrawFullSprite(ID3D11ShaderResourceView* texture, DirectX::SimpleMath::Vector2 position);
 		void DrawSizedSprite(ID3D11ShaderResourceView* texture, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 size);
+
+		//Font drawing functions
+		void DrawString_TopLeftCoordinate(DirectX::SpriteFont* spriteFont, std::wstring text, DirectX::SimpleMath::Vector2 topLeftPositionCoord, DirectX::FXMVECTOR colour, bool dropShadow = false);
+		void DrawString_CentreCoordinate(DirectX::SpriteFont* spriteFont, std::wstring text, DirectX::SimpleMath::Vector2 centrePositionCoord, DirectX::FXMVECTOR colour, bool dropShadow = false);
+
+		void DrawString_CentredInRow(DirectX::SpriteFont* spriteFont, std::wstring text, float rowCoord, DirectX::FXMVECTOR colour, bool dropShadow = false);
 
 		//Texture loaders
 		void LoadTexture(std::wstring filePath, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& texture, CD3D11_TEXTURE2D_DESC&  textureDescription);
