@@ -9,6 +9,6 @@
 #include "Application/Application.h"
 #include "Audio/AudioIncludes.h"
 #include "Templates/Templates.h"
-#include "Fonts/Fonts.h"
+#include "Fonts/DefaultFonts.h"
 
 //#include "Application/EntryPoint.h"

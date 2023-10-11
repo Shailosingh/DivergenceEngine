@@ -173,10 +173,53 @@ namespace DivergenceEngine
 		SpriteBatchPointer->Draw(texture, positionRectangle, nullptr, DirectX::Colors::White);
 	}
 
+	//Font drawing functions-----------------------------------------------------------------------
+	void Graphics::DrawString_TopLeftCoordinate(DirectX::SpriteFont* spriteFont, std::wstring text, DirectX::SimpleMath::Vector2 topLeftPositionCoord, DirectX::FXMVECTOR colour, bool dropShadow)
+	{
+		BeginSpriteBatch();
+
+		if (dropShadow)
+		{
+			//Take the negation of the font colour and use that as its drop shadow colour
+			DirectX::SimpleMath::Color shadowColour = DirectX::SimpleMath::Color(colour);
+			shadowColour.Negate();
+
+			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), topLeftPositionCoord + DirectX::SimpleMath::Vector2(1, 1), shadowColour);
+		}
+
+		spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), topLeftPositionCoord, colour);
+	}
+
+	void Graphics::DrawString_CentreCoordinate(DirectX::SpriteFont* spriteFont, std::wstring text, DirectX::SimpleMath::Vector2 centrePositionCoord, DirectX::FXMVECTOR colour, bool dropShadow)
+	{
+		BeginSpriteBatch();
+
+		//Calculate the coordinate of the centre of the string with respect to the font and string itself
+		DirectX::SimpleMath::Vector2 origin = spriteFont->MeasureString(text.c_str());
+		origin /= 2.f;
+
+		if (dropShadow)
+		{
+			//Take the negation of the font colour and use that as its drop shadow colour
+			DirectX::SimpleMath::Color shadowColour = DirectX::SimpleMath::Color(colour);
+			shadowColour.Negate();
+
+			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), centrePositionCoord + DirectX::SimpleMath::Vector2(1, 1), shadowColour, 0, origin);
+		}
+
+		spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), centrePositionCoord, colour, 0, origin);
+	}
+
+	//Font measurement functions-------------------------------------------------------------------
+	DirectX::SimpleMath::Vector2 Graphics::MeasureString(DirectX::SpriteFont* spriteFont, std::wstring text)
+	{
+		return spriteFont->MeasureString(text.c_str());
+	}
+
 	//Texture Loader-------------------------------------------------------------------------------
 	
 	//Designed for loading textures from files, when you need to know the size of the texture
-	void Graphics::LoadTexture(std::wstring filePath, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& texture, CD3D11_TEXTURE2D_DESC& textureDescription)
+	void Graphics::LoadTexture(const std::wstring& filePath, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& texture, CD3D11_TEXTURE2D_DESC& textureDescription)
 	{
 		//Load the texture and its resource info from the file
 		wrl::ComPtr<ID3D11Resource> resource;
@@ -189,25 +232,36 @@ namespace DivergenceEngine
 	}
 
 	//For loading textures from files, when you won't need the default size of the texture and it will be defined by the programmer
-	void Graphics::LoadTexture(std::wstring filePath, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& texture)
+	void Graphics::LoadTexture(const std::wstring& filePath, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& texture)
 	{
 		DX::ThrowIfFailed(DirectX::CreateWICTextureFromFile(DevicePointer.Get(), filePath.c_str(), nullptr, &texture));
 	}
 
 	//Font Loader----------------------------------------------------------------------------------
-	void Graphics::LoadFont(std::wstring spriteFontPath, std::unique_ptr<DirectX::SpriteFont>& spriteFont)
+	void Graphics::LoadFont(const std::wstring& spriteFontPath, std::weak_ptr<DirectX::SpriteFont>& spriteFont)
 	{
-		spriteFont = std::make_unique<DirectX::SpriteFont>(DevicePointer.Get(), spriteFontPath.c_str());
+		if (!FontMap.contains(spriteFontPath))
+		{
+			FontMap[spriteFontPath] = std::make_shared<DirectX::SpriteFont>(DevicePointer.Get(), spriteFontPath.c_str());
+		}
+
+		spriteFont = FontMap[spriteFontPath];
 	}
 
-	void Graphics::LoadFont(DefaultFonts::DefaultFontIndices defaultFontIndex, std::unique_ptr<DirectX::SpriteFont>& spriteFont)
+	void Graphics::LoadFont(DefaultFonts::DefaultFontIndices defaultFontIndex, std::weak_ptr<DirectX::SpriteFont>& spriteFont)
 	{
 		if (defaultFontIndex == DefaultFonts::DefaultFontIndices::TOTAL_DEFAULT_FONTS)
 		{
 			throw std::invalid_argument("Graphics::LoadFont() Invalid defaultFontIndex");
 		}
 
-		spriteFont = std::make_unique<DirectX::SpriteFont>(DevicePointer.Get(), DefaultFonts::FontPaths[static_cast<size_t>(defaultFontIndex)].c_str());
+		std::wstring spriteFontPath = DefaultFonts::FontPaths[static_cast<size_t>(defaultFontIndex)].c_str();
+		if (!FontMap.contains(spriteFontPath))
+		{
+			FontMap[spriteFontPath] = std::make_shared<DirectX::SpriteFont>(DevicePointer.Get(), spriteFontPath.c_str());
+		}
+		
+		spriteFont = FontMap[spriteFontPath];
 	}
 
 	//Helpers--------------------------------------------------------------------------------------

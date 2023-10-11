@@ -102,6 +102,12 @@
     <ClInclude Include="src\Audio\OGGSimpleSoundEffect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Templates\PlainText.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Templates\BoundedText.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Logger\Logger.cpp">
@@ -147,6 +153,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Audio\OGGSimpleSoundEffect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Templates\PlainText.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

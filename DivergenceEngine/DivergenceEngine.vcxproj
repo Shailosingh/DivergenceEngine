@@ -102,9 +102,11 @@
     <ClInclude Include="src\Globals.h" />
     <ClInclude Include="src\Graphics\Graphics.h" />
     <ClInclude Include="src\StringConverter.h" />
+    <ClInclude Include="src\Templates\BoundedText.h" />
     <ClInclude Include="src\Templates\ButtonMenu.h" />
     <ClInclude Include="src\Templates\Image.h" />
     <ClInclude Include="src\Templates\InvisibleDrawable.h" />
+    <ClInclude Include="src\Templates\PlainText.h" />
     <ClInclude Include="src\Templates\Templates.h" />
     <ClInclude Include="src\Templates\UnclickableDrawable.h" />
     <ClInclude Include="src\Window\IDrawable.h" />
@@ -127,6 +129,7 @@
     <ClCompile Include="src\Templates\ButtonMenu.cpp" />
     <ClCompile Include="src\Templates\Image.cpp" />
     <ClCompile Include="src\Templates\InvisibleDrawable.cpp" />
+    <ClCompile Include="src\Templates\PlainText.cpp" />
     <ClCompile Include="src\Window\Keyboard.cpp" />
     <ClCompile Include="src\Window\Mouse.cpp" />
     <ClCompile Include="src\Window\Window.cpp" />

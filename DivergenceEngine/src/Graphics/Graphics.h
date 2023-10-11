@@ -9,6 +9,7 @@
 #include <CommonStates.h>
 #include <SpriteFont.h>
 #include "Fonts/DefaultFonts.h"
+#include <unordered_map>
 
 /*
 Video playback links:
@@ -35,6 +36,7 @@ namespace DivergenceEngine
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> RenderTargetPointer;
 		std::unique_ptr<DirectX::SpriteBatch> SpriteBatchPointer;
 		std::unique_ptr<DirectX::CommonStates> SpriteBatchStatesPointer;
+		std::unordered_map <std::wstring, std::shared_ptr<DirectX::SpriteFont>> FontMap;
 		bool IsSpriteBatchDrawing = false;
 
 		//Helpers
@@ -65,15 +67,16 @@ namespace DivergenceEngine
 		void DrawString_TopLeftCoordinate(DirectX::SpriteFont* spriteFont, std::wstring text, DirectX::SimpleMath::Vector2 topLeftPositionCoord, DirectX::FXMVECTOR colour, bool dropShadow = false);
 		void DrawString_CentreCoordinate(DirectX::SpriteFont* spriteFont, std::wstring text, DirectX::SimpleMath::Vector2 centrePositionCoord, DirectX::FXMVECTOR colour, bool dropShadow = false);
 
-		void DrawString_CentredInRow(DirectX::SpriteFont* spriteFont, std::wstring text, float rowCoord, DirectX::FXMVECTOR colour, bool dropShadow = false);
+		//Font measurement functions
+		DirectX::SimpleMath::Vector2 MeasureString(DirectX::SpriteFont* spriteFont, std::wstring text);
 
 		//Texture loaders
-		void LoadTexture(std::wstring filePath, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& texture, CD3D11_TEXTURE2D_DESC&  textureDescription);
-		void LoadTexture(std::wstring filePath, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& texture);
+		void LoadTexture(const std::wstring& filePath, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& texture, CD3D11_TEXTURE2D_DESC&  textureDescription);
+		void LoadTexture(const std::wstring& filePath, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& texture);
 
 		//Font loaders
-		void LoadFont(std::wstring spriteFontPath, std::unique_ptr<DirectX::SpriteFont>& spriteFont);
-		void LoadFont(DefaultFonts::DefaultFontIndices defaultFontIndex, std::unique_ptr<DirectX::SpriteFont>& spriteFont);
+		void LoadFont(const std::wstring& spriteFontPath, std::weak_ptr<DirectX::SpriteFont>& spriteFont);
+		void LoadFont(DefaultFonts::DefaultFontIndices defaultFontIndex, std::weak_ptr<DirectX::SpriteFont>& spriteFont);
 
 		//Getters
 		DirectX::XMINT2 GetBufferSize() const noexcept;
