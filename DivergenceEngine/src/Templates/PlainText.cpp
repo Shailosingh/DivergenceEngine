@@ -47,5 +47,24 @@ namespace DivergenceEngine::Templates
 	{
 		//Measure the size of the string
 		DirectX::SimpleMath::Vector2 stringSize = SpriteFont.lock()->MeasureString(TextString.c_str());
+
+		//Get the rectangle bounding the drawn string
+		DirectX::SimpleMath::Rectangle boundingRectangle;
+
+		if (IsPositionCoordCentredOnString)
+		{
+			boundingRectangle.x = PositionCoord.x - stringSize.x / 2.f;
+			boundingRectangle.y = PositionCoord.y - stringSize.y / 2.f;
+		}
+		else
+		{
+			boundingRectangle.x = PositionCoord.x;
+			boundingRectangle.y = PositionCoord.y;
+		}
+		boundingRectangle.width = stringSize.x;
+		boundingRectangle.height = stringSize.y;
+
+		//Check if the mouse pos is in the rectangle
+		return boundingRectangle.Contains(mousePos.x, mousePos.y);
 	}
 }

@@ -14,6 +14,10 @@ void TypableTitlePage::Initialize(DivergenceEngine::Window* windowReference)
 	std::shared_ptr<DivergenceEngine::Templates::Image> backgroundImage = std::make_shared<DivergenceEngine::Templates::Image>(L"Images\\TypableTitlePage\\Plains.jpg", WindowReference->GraphicsController, DirectX::SimpleMath::Vector2(0, 0));
 	WindowReference->AddDrawableComponent(backgroundImage, 0);
 
+	//Load hello world text onto screen
+	ScreenText = std::make_shared<DivergenceEngine::Templates::PlainText>(WindowReference->GraphicsController, L"Hello World!", DivergenceEngine::DefaultFonts::DefaultFontIndices::M_PLUS_1_Size24, DirectX::SimpleMath::Vector2(100, 100));
+	WindowReference->AddDrawableComponent(ScreenText, 2);
+
 	DivergenceEngine::Logger::Log(L"TypableTitlePage constructed");
 
 }

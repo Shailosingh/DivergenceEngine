@@ -3,3 +3,5 @@
 #include "UnclickableDrawable.h"
 #include "ButtonMenu.h"
 #include "InvisibleDrawable.h"
+#include "PlainText.h"
+#include "BoundedText.h"

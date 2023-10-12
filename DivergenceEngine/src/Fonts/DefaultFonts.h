@@ -13,6 +13,6 @@ namespace DivergenceEngine::DefaultFonts
 
 	const static std::array<std::wstring, static_cast<size_t>(DefaultFontIndices::TOTAL_DEFAULT_FONTS)> FontPaths
 	{
-		L"Fonts\\FontFiles\\M PLUS 1 (Size_24).spritefont"
+		L"C:\\Code Projects\\C++\\DivergenceEngine\\DivergenceEngine\\src\\Fonts\\FontFiles\\M PLUS 1 (Size_24).spritefont"
 	};
 }
