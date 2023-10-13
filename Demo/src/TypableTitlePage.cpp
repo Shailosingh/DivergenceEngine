@@ -5,6 +5,9 @@ void TypableTitlePage::Initialize(DivergenceEngine::Window* windowReference)
 {
 	//Load in the window pointer
 	WindowReference = windowReference;
+
+	//Get the buffer size
+	DirectX::XMINT2 bufferSize = WindowReference->GraphicsController->GetBufferSize();
 	
 	//Load image on foreground
 	std::shared_ptr<DivergenceEngine::Templates::Image> bisonImage = std::make_shared<DivergenceEngine::Templates::Image>(L"Images\\TypableTitlePage\\Bison.png", WindowReference->GraphicsController, DirectX::SimpleMath::Vector2(350, 200), DirectX::SimpleMath::Vector2(300, 207));
@@ -15,7 +18,7 @@ void TypableTitlePage::Initialize(DivergenceEngine::Window* windowReference)
 	WindowReference->AddDrawableComponent(backgroundImage, 0);
 
 	//Load hello world text onto screen
-	ScreenText = std::make_shared<DivergenceEngine::Templates::PlainText>(WindowReference->GraphicsController, L"Hello World!", DivergenceEngine::DefaultFonts::DefaultFontIndices::M_PLUS_1_Size24, DirectX::SimpleMath::Vector2(100, 100));
+	ScreenText = std::make_shared<DivergenceEngine::Templates::PlainText>(WindowReference->GraphicsController, L"The quick brown fox jumped over the lazy dog!", DivergenceEngine::DefaultFonts::DefaultFontIndices::M_PLUS_1_Size18, DirectX::SimpleMath::Vector2(bufferSize.x/2, 400), DirectX::Colors::White, true, true);
 	WindowReference->AddDrawableComponent(ScreenText, 2);
 
 	DivergenceEngine::Logger::Log(L"TypableTitlePage constructed");

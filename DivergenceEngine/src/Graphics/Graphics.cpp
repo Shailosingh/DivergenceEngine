@@ -185,6 +185,9 @@ namespace DivergenceEngine
 			shadowColour.Negate();
 
 			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), topLeftPositionCoord + DirectX::SimpleMath::Vector2(1, 1), shadowColour);
+			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), topLeftPositionCoord + DirectX::SimpleMath::Vector2(-1, 1), shadowColour);
+			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), topLeftPositionCoord + DirectX::SimpleMath::Vector2(-1, -1), shadowColour);
+			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), topLeftPositionCoord + DirectX::SimpleMath::Vector2(1, -1), shadowColour);
 		}
 
 		spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), topLeftPositionCoord, colour);
@@ -205,6 +208,9 @@ namespace DivergenceEngine
 			shadowColour.Negate();
 
 			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), centrePositionCoord + DirectX::SimpleMath::Vector2(1, 1), shadowColour, 0, origin);
+			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), centrePositionCoord + DirectX::SimpleMath::Vector2(-1, 1), shadowColour, 0, origin);
+			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), centrePositionCoord + DirectX::SimpleMath::Vector2(-1, -1), shadowColour, 0, origin);
+			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), centrePositionCoord + DirectX::SimpleMath::Vector2(1, -1), shadowColour, 0, origin);
 		}
 
 		spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), centrePositionCoord, colour, 0, origin);
