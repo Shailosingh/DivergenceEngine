@@ -21,14 +21,14 @@ namespace DivergenceEngine::DefaultFonts
 
 	const static std::array<std::wstring, static_cast<size_t>(DefaultFontIndices::TOTAL_DEFAULT_FONTS)> FontPaths
 	{
-		L"C:\\Users\\compu\\Desktop\\Code Projects\\C++ Projects\\DivergenceEngine\\DivergenceEngine\\src\\Fonts\\FontFiles\\M PLUS 1 (Size_16).spritefont",
-		L"C:\\Users\\compu\\Desktop\\Code Projects\\C++ Projects\\DivergenceEngine\\DivergenceEngine\\src\\Fonts\\FontFiles\\M PLUS 1 (Size_18).spritefont",
-		L"C:\\Users\\compu\\Desktop\\Code Projects\\C++ Projects\\DivergenceEngine\\DivergenceEngine\\src\\Fonts\\FontFiles\\M PLUS 1 (Size_20).spritefont",
-		L"C:\\Users\\compu\\Desktop\\Code Projects\\C++ Projects\\DivergenceEngine\\DivergenceEngine\\src\\Fonts\\FontFiles\\M PLUS 1 (Size_24).spritefont",
+		L"C:\\Code Projects\\C++ Projects\\DivergenceEngine\\DivergenceEngine\\src\\Fonts\\FontFiles\\M PLUS 1 (Size_16).spritefont",
+		L"C:\\Code Projects\\C++ Projects\\DivergenceEngine\\DivergenceEngine\\src\\Fonts\\FontFiles\\M PLUS 1 (Size_18).spritefont",
+		L"C:\\Code Projects\\C++ Projects\\DivergenceEngine\\DivergenceEngine\\src\\Fonts\\FontFiles\\M PLUS 1 (Size_20).spritefont",
+		L"C:\\Code Projects\\C++ Projects\\DivergenceEngine\\DivergenceEngine\\src\\Fonts\\FontFiles\\M PLUS 1 (Size_24).spritefont",
 
-		L"C:\\Users\\compu\\Desktop\\Code Projects\\C++ Projects\\DivergenceEngine\\DivergenceEngine\\src\\Fonts\\FontFiles\\M PLUS 1 Medium (Size_16).spritefont",
-		L"C:\\Users\\compu\\Desktop\\Code Projects\\C++ Projects\\DivergenceEngine\\DivergenceEngine\\src\\Fonts\\FontFiles\\M PLUS 1 Medium (Size_18).spritefont",
-		L"C:\\Users\\compu\\Desktop\\Code Projects\\C++ Projects\\DivergenceEngine\\DivergenceEngine\\src\\Fonts\\FontFiles\\M PLUS 1 Medium (Size_20).spritefont",
-		L"C:\\Users\\compu\\Desktop\\Code Projects\\C++ Projects\\DivergenceEngine\\DivergenceEngine\\src\\Fonts\\FontFiles\\M PLUS 1 Medium (Size_24).spritefont"
+		L"C:\\Code Projects\\C++ Projects\\DivergenceEngine\\DivergenceEngine\\src\\Fonts\\FontFiles\\M PLUS 1 Medium (Size_16).spritefont",
+		L"C:\\Code Projects\\C++ Projects\\DivergenceEngine\\DivergenceEngine\\src\\Fonts\\FontFiles\\M PLUS 1 Medium (Size_18).spritefont",
+		L"C:\\Code Projects\\C++ Projects\\DivergenceEngine\\DivergenceEngine\\src\\Fonts\\FontFiles\\M PLUS 1 Medium (Size_20).spritefont",
+		L"C:\\Code Projects\\C++ Projects\\DivergenceEngine\\DivergenceEngine\\src\\Fonts\\FontFiles\\M PLUS 1 Medium (Size_24).spritefont"
 	};
 }
