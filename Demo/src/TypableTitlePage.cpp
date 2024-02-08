@@ -1,4 +1,5 @@
 #include "TypableTitlePage.h"
+#include "DefaultFonts.h"
 #include <format>
 
 void TypableTitlePage::Initialize(DivergenceEngine::Window* windowReference)
@@ -18,7 +19,7 @@ void TypableTitlePage::Initialize(DivergenceEngine::Window* windowReference)
 	WindowReference->AddDrawableComponent(backgroundImage, 0);
 
 	//Load hello world text onto screen
-	ScreenText = std::make_shared<DivergenceEngine::Templates::PlainText>(WindowReference->GraphicsController, L"The quick brown fox jumps over the lazy dog!", DivergenceEngine::DefaultFonts::DefaultFontIndices::M_PLUS_1_Size20, DirectX::SimpleMath::Vector2(bufferSize.x/2, 400), DirectX::Colors::White, true, true);
+	ScreenText = std::make_shared<DivergenceEngine::Templates::PlainText>(WindowReference->GraphicsController, L"The quick brown fox jumps over the lazy dog!", DefaultFonts::GetFontPath(DefaultFonts::DefaultFontIndices::M_PLUS_1_Size20), DirectX::SimpleMath::Vector2(bufferSize.x/2, 400), DirectX::Colors::White, true, true);
 	WindowReference->AddDrawableComponent(ScreenText, 2);
 
 	DivergenceEngine::Logger::Log(L"TypableTitlePage constructed");
@@ -74,18 +75,6 @@ void TypableTitlePage::UpdatePage(const DX::StepTimer& timer)
 			//DivergenceEngine::Logger::RawLog(std::format(L"Released Key Code: {:#02x}", currentEvent.GetCode()));
 		}
 	}
-	
-	//TODO: Create a Menu IDrawable that will take a pair of images for each menu item (default and hover), the coords and of each item and delegates/function pointers to handle selection
-}
-
-void TypableTitlePage::HandleScroll(int scrollDelta)
-{
-	//TypableTitlePage doesn't scroll
-}
-
-void TypableTitlePage::HandleMouseMove(DirectX::XMINT2 newMousePos)
-{
-	//Doesn't respond to mouse events
 }
 
 bool TypableTitlePage::OnWindowDestructionRequest()

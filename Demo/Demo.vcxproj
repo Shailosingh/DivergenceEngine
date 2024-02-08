@@ -95,10 +95,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Demo.h" />
+    <ClInclude Include="src\DefaultFonts.h" />
     <ClInclude Include="src\MainMenuPage.h" />
     <ClInclude Include="src\TypableTitlePage.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Fonts\M PLUS 1 %28Size_24%29.spritefont" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

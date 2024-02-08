@@ -19,8 +19,7 @@ namespace DivergenceEngine::Templates
 
 	public:
 		//Constructors and Destructor
-		PlainText(std::weak_ptr<Graphics> graphicsController, const std::wstring& textString, std::wstring spriteFontPath, DirectX::SimpleMath::Vector2 positionCoord, DirectX::FXMVECTOR colour = DirectX::Colors::White, bool dropShadow = false, bool isPositionCoordCentredOnString = false);
-		PlainText(std::weak_ptr<Graphics> graphicsController, const std::wstring& textString, DefaultFonts::DefaultFontIndices defaultFontIndex, DirectX::SimpleMath::Vector2 positionCoord, DirectX::FXMVECTOR colour = DirectX::Colors::White, bool dropShadow = false, bool isPositionCoordCentredOnString = false);
+		PlainText(std::weak_ptr<Graphics> graphicsController, const std::wstring& textString, const std::wstring& spriteFontPath, DirectX::SimpleMath::Vector2 positionCoord, DirectX::FXMVECTOR colour = DirectX::Colors::White, bool dropShadow = false, bool isPositionCoordCentredOnString = false);
 
 		//Setters
 		void SetTextString(const std::wstring& textString);

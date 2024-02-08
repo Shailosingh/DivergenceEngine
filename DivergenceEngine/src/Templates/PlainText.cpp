@@ -2,7 +2,7 @@
 
 namespace DivergenceEngine::Templates
 {
-	PlainText::PlainText(std::weak_ptr<Graphics> graphicsController, const std::wstring& textString, std::wstring spriteFontPath, DirectX::SimpleMath::Vector2 positionCoord, DirectX::FXMVECTOR colour, bool dropShadow, bool isPositionCoordCentredOnString):
+	PlainText::PlainText(std::weak_ptr<Graphics> graphicsController, const std::wstring& textString, const std::wstring& spriteFontPath, DirectX::SimpleMath::Vector2 positionCoord, DirectX::FXMVECTOR colour, bool dropShadow, bool isPositionCoordCentredOnString):
 		WindowGraphicsController(graphicsController),
 		TextString(textString),
 		PositionCoord(positionCoord),
@@ -12,18 +12,6 @@ namespace DivergenceEngine::Templates
 	{
 		//Load the font
 		WindowGraphicsController.lock()->LoadFont(spriteFontPath, SpriteFont);
-	}
-
-	PlainText::PlainText(std::weak_ptr<Graphics> graphicsController, const std::wstring& textString, DefaultFonts::DefaultFontIndices defaultFontIndex, DirectX::SimpleMath::Vector2 positionCoord, DirectX::FXMVECTOR colour, bool dropShadow, bool isPositionCoordCentredOnString):
-		WindowGraphicsController(graphicsController),
-		TextString(textString),
-		PositionCoord(positionCoord),
-		Colour(colour),
-		DropShadow(dropShadow),
-		IsPositionCoordCentredOnString(isPositionCoordCentredOnString)
-	{
-		//Load the font
-		WindowGraphicsController.lock()->LoadFont(defaultFontIndex, SpriteFont);
 	}
 
 	void PlainText::SetTextString(const std::wstring& textString)

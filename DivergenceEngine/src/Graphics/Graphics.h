@@ -8,7 +8,6 @@
 #include <SpriteBatch.h> 
 #include <CommonStates.h>
 #include <SpriteFont.h>
-#include "Fonts/DefaultFonts.h"
 #include <unordered_map>
 
 /*
@@ -76,7 +75,6 @@ namespace DivergenceEngine
 
 		//Font loaders
 		void LoadFont(const std::wstring& spriteFontPath, std::weak_ptr<DirectX::SpriteFont>& spriteFont);
-		void LoadFont(DefaultFonts::DefaultFontIndices defaultFontIndex, std::weak_ptr<DirectX::SpriteFont>& spriteFont);
 
 		//Getters
 		DirectX::XMINT2 GetBufferSize() const noexcept;

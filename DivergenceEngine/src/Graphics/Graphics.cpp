@@ -249,24 +249,9 @@ namespace DivergenceEngine
 		if (!FontMap.contains(spriteFontPath))
 		{
 			FontMap[spriteFontPath] = std::make_shared<DirectX::SpriteFont>(DevicePointer.Get(), spriteFontPath.c_str());
+			DivergenceEngine::Logger::Log(std::format(L"Font loaded from file: {}", spriteFontPath));
 		}
 
-		spriteFont = FontMap[spriteFontPath];
-	}
-
-	void Graphics::LoadFont(DefaultFonts::DefaultFontIndices defaultFontIndex, std::weak_ptr<DirectX::SpriteFont>& spriteFont)
-	{
-		if (defaultFontIndex == DefaultFonts::DefaultFontIndices::TOTAL_DEFAULT_FONTS)
-		{
-			throw std::invalid_argument("Graphics::LoadFont() Invalid defaultFontIndex");
-		}
-
-		std::wstring spriteFontPath = DefaultFonts::FontPaths[static_cast<size_t>(defaultFontIndex)].c_str();
-		if (!FontMap.contains(spriteFontPath))
-		{
-			FontMap[spriteFontPath] = std::make_shared<DirectX::SpriteFont>(DevicePointer.Get(), spriteFontPath.c_str());
-		}
-		
 		spriteFont = FontMap[spriteFontPath];
 	}
 

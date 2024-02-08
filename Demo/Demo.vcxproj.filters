@@ -35,8 +35,12 @@
     <ClInclude Include="src\MainMenuPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\DefaultFonts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Fonts\M PLUS 1 %28Size_24%29.spritefont" />
   </ItemGroup>
 </Project>

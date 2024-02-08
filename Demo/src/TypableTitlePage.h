@@ -18,7 +18,7 @@ public:
 
 	//Overridden functions
 	void UpdatePage(const DX::StepTimer& timer) override;
-	void HandleScroll(int scrollDelta) override;
-	void HandleMouseMove(DirectX::XMINT2 newMousePos) override;
+	void HandleScroll(int scrollDelta) override {};
+	void HandleMouseMove(DirectX::XMINT2 newMousePos) override {};
 	bool OnWindowDestructionRequest() override;
 };
