@@ -109,7 +109,7 @@ namespace DivergenceEngine
 		SoundEffectInstance->Pause();
 
 		//Clear up all MMAP stuff
-		UnmapViewOfFile(DataChunkFileMappingPointer);
+		UnmapViewOfFile(OriginalFileMappingPointer);
 		CloseHandle(FileMappingHandle);
 		CloseHandle(FileHandle);
 
