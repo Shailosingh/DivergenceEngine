@@ -187,7 +187,7 @@ namespace DivergenceEngine
 	void WAVAudioInstance::BufferNeeded(DirectX::DynamicSoundEffectInstance* instance)
 	{		
 		//Get the target buffer size
-		//If the byte rate is 176400 and a max number of buffers is 5, then 2048*3/176400 = 0.05 seconds (pretty good buffer sizing for latency, don't hear crackling either)
+		//If the byte rate is 176400 and a max number of buffers is 5, then 2048*5/176400 = 0.05 seconds (pretty good buffer sizing for latency, don't hear crackling either)
 		//Multiplying by PlaybackSpeed so the buffers can keep up without crackle (might cause latency, check later)
 		uint32_t targetBufferSize = 2048*PlaybackSpeedMultiplier;
 
