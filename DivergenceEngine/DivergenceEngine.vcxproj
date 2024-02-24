@@ -101,7 +101,6 @@
     <ClInclude Include="src\Globals.h" />
     <ClInclude Include="src\Graphics\Graphics.h" />
     <ClInclude Include="src\StringConverter.h" />
-    <ClInclude Include="src\Templates\BoundedText.h" />
     <ClInclude Include="src\Templates\ButtonMenu.h" />
     <ClInclude Include="src\Templates\Image.h" />
     <ClInclude Include="src\Templates\InvisibleDrawable.h" />

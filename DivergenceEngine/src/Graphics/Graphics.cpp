@@ -174,7 +174,7 @@ namespace DivergenceEngine
 	}
 
 	//Font drawing functions-----------------------------------------------------------------------
-	void Graphics::DrawString_TopLeftCoordinate(DirectX::SpriteFont* spriteFont, std::wstring text, DirectX::SimpleMath::Vector2 topLeftPositionCoord, DirectX::FXMVECTOR colour, bool dropShadow)
+	void Graphics::DrawString(DirectX::SpriteFont* spriteFont, std::wstring text, DirectX::SimpleMath::Vector2 positionCoord, DirectX::SimpleMath::Vector2 origin, DirectX::FXMVECTOR colour, bool dropShadow)
 	{
 		BeginSpriteBatch();
 
@@ -184,42 +184,13 @@ namespace DivergenceEngine
 			DirectX::SimpleMath::Color shadowColour = DirectX::SimpleMath::Color(colour);
 			shadowColour.Negate();
 
-			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), topLeftPositionCoord + DirectX::SimpleMath::Vector2(1, 1), shadowColour);
-			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), topLeftPositionCoord + DirectX::SimpleMath::Vector2(-1, 1), shadowColour);
-			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), topLeftPositionCoord + DirectX::SimpleMath::Vector2(-1, -1), shadowColour);
-			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), topLeftPositionCoord + DirectX::SimpleMath::Vector2(1, -1), shadowColour);
+			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), positionCoord + DirectX::SimpleMath::Vector2(1, 1), shadowColour, 0, origin);
+			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), positionCoord + DirectX::SimpleMath::Vector2(-1, 1), shadowColour, 0, origin);
+			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), positionCoord + DirectX::SimpleMath::Vector2(-1, -1), shadowColour, 0, origin);
+			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), positionCoord + DirectX::SimpleMath::Vector2(1, -1), shadowColour, 0, origin);
 		}
 
-		spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), topLeftPositionCoord, colour);
-	}
-
-	void Graphics::DrawString_CentreCoordinate(DirectX::SpriteFont* spriteFont, std::wstring text, DirectX::SimpleMath::Vector2 centrePositionCoord, DirectX::FXMVECTOR colour, bool dropShadow)
-	{
-		BeginSpriteBatch();
-
-		//Calculate the coordinate of the centre of the string with respect to the font and string itself
-		DirectX::SimpleMath::Vector2 origin = spriteFont->MeasureString(text.c_str());
-		origin /= 2.f;
-
-		if (dropShadow)
-		{
-			//Take the negation of the font colour and use that as its drop shadow colour
-			DirectX::SimpleMath::Color shadowColour = DirectX::SimpleMath::Color(colour);
-			shadowColour.Negate();
-
-			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), centrePositionCoord + DirectX::SimpleMath::Vector2(1, 1), shadowColour, 0, origin);
-			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), centrePositionCoord + DirectX::SimpleMath::Vector2(-1, 1), shadowColour, 0, origin);
-			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), centrePositionCoord + DirectX::SimpleMath::Vector2(-1, -1), shadowColour, 0, origin);
-			spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), centrePositionCoord + DirectX::SimpleMath::Vector2(1, -1), shadowColour, 0, origin);
-		}
-
-		spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), centrePositionCoord, colour, 0, origin);
-	}
-
-	//Font measurement functions-------------------------------------------------------------------
-	DirectX::SimpleMath::Vector2 Graphics::MeasureString(DirectX::SpriteFont* spriteFont, std::wstring text)
-	{
-		return spriteFont->MeasureString(text.c_str());
+		spriteFont->DrawString(SpriteBatchPointer.get(), text.c_str(), positionCoord, colour, 0, origin);
 	}
 
 	//Texture Loader-------------------------------------------------------------------------------

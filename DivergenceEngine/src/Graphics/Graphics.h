@@ -63,11 +63,7 @@ namespace DivergenceEngine
 		void DrawSizedSprite(ID3D11ShaderResourceView* texture, DirectX::SimpleMath::Vector2 position, DirectX::SimpleMath::Vector2 size);
 
 		//Font drawing functions
-		void DrawString_TopLeftCoordinate(DirectX::SpriteFont* spriteFont, std::wstring text, DirectX::SimpleMath::Vector2 topLeftPositionCoord, DirectX::FXMVECTOR colour, bool dropShadow = false);
-		void DrawString_CentreCoordinate(DirectX::SpriteFont* spriteFont, std::wstring text, DirectX::SimpleMath::Vector2 centrePositionCoord, DirectX::FXMVECTOR colour, bool dropShadow = false);
-
-		//Font measurement functions
-		DirectX::SimpleMath::Vector2 MeasureString(DirectX::SpriteFont* spriteFont, std::wstring text);
+		void DrawString(DirectX::SpriteFont* spriteFont, std::wstring text, DirectX::SimpleMath::Vector2 positionCoord, DirectX::SimpleMath::Vector2 origin = DirectX::SimpleMath::Vector2(0,0), DirectX::FXMVECTOR colour = DirectX::Colors::White, bool dropShadow = false);
 
 		//Texture loaders
 		void LoadTexture(const std::wstring& filePath, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& texture, CD3D11_TEXTURE2D_DESC&  textureDescription);
