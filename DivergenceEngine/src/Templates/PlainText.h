@@ -36,6 +36,9 @@ namespace DivergenceEngine::Templates
 		//Constructors and Destructor
 		PlainText(std::weak_ptr<Graphics> graphicsController, const std::wstring& textString, const std::wstring& spriteFontPath, DirectX::SimpleMath::Vector2 positionCoord, TextOriginClass originClass = TextOriginClass::TopLeft, DirectX::FXMVECTOR colour = DirectX::Colors::White, bool dropShadow = false);
 
+		//Getters
+		DirectX::SimpleMath::Rectangle GetBoundingRectangle() const noexcept;
+
 		//Setters
 		void SetTextString(const std::wstring& textString);
 

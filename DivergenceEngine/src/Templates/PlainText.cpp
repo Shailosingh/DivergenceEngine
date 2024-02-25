@@ -17,9 +17,20 @@ namespace DivergenceEngine::Templates
 		OriginCoord = ComputeOrigin(originClass);
 	}
 
+	DirectX::SimpleMath::Rectangle PlainText::GetBoundingRectangle() const noexcept
+	{
+		//Get the top left corner of the text
+		DirectX::SimpleMath::Vector2 topLeft = PositionCoord - OriginCoord;
+
+		//Get the rectangle bounding the text
+		RECT boundingRect = SpriteFont.lock()->MeasureDrawBounds(TextString.c_str(), topLeft, false);
+		return DirectX::SimpleMath::Rectangle(boundingRect.left, boundingRect.top, boundingRect.right - boundingRect.left, boundingRect.bottom - boundingRect.top);
+	}
+
 	void PlainText::SetTextString(const std::wstring& textString)
 	{
 		TextString = textString;
+		OriginCoord = ComputeOrigin(TextOriginClass::TopLeft);
 	}
 
 	void PlainText::Draw()
@@ -29,12 +40,8 @@ namespace DivergenceEngine::Templates
 
 	bool PlainText::IsCoordInObject(DirectX::XMINT2 mousePos)
 	{
-		//Get the top left corner of the text
-		DirectX::SimpleMath::Vector2 topLeft = PositionCoord - OriginCoord;
-
 		//Get the rectangle bounding the text
-		RECT boundingRect = SpriteFont.lock()->MeasureDrawBounds(TextString.c_str(), topLeft, false);
-		DirectX::SimpleMath::Rectangle boundingRectangle = DirectX::SimpleMath::Rectangle(boundingRect.left, boundingRect.top, boundingRect.right - boundingRect.left, boundingRect.bottom - boundingRect.top);
+		DirectX::SimpleMath::Rectangle boundingRectangle = GetBoundingRectangle();
 
 		//Check if the mouse is in the rectangle
 		return boundingRectangle.Contains(static_cast<long>(mousePos.x), static_cast<long> (mousePos.y));
