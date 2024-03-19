@@ -175,7 +175,6 @@ namespace DivergenceEngine
 			{
 				Application::RemoveWindow(hWnd);
 			}
-			return 0;
 			break;
 
 		case WM_SIZE:
@@ -255,9 +254,14 @@ namespace DivergenceEngine
 		case WM_MBUTTONUP:
 			MouseObject.OnMiddleReleased();
 			break;
+
+		//Default----------------------------------------------------------------------------------
+		default:
+			return DefWindowProc(hWnd, uMsg, wParam, lParam);
+			break;
 		}
 
-		return DefWindowProc(hWnd, uMsg, wParam, lParam);
+		return 0;
 	}
 
 	void Window::RenderWindow()
