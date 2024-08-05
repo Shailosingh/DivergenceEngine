@@ -12,10 +12,27 @@ namespace DivergenceEngine
 		//Set the initial data for the Window
 		ProcessInstance = GetModuleHandle(nullptr);
 
-		//Take in the input fps and if it is 0, set it to 60
+		//Take in the input fps and if it is 0, set it to the default refresh rate of the current display
 		if (frameRate == 0)
 		{
-			FrameRate = 60;
+			DEVMODE dm = { 0 };
+			dm.dmSize = sizeof(DEVMODE);
+			if (EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &dm))
+			{
+				//dmDisplayFrequency sometimes returns 0 or 1. This means the hardware doesn't allow us to see the refresh rate. In this case, set the frame rate to 60
+				if (dm.dmDisplayFrequency <= 1)
+				{
+					FrameRate = 60;
+				}
+				else
+				{
+					FrameRate = dm.dmDisplayFrequency;
+				}
+			}
+			else
+			{
+				throw std::exception("Could not get the display refresh rate");
+			}
 		}
 		else
 		{

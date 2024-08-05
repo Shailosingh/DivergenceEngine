@@ -15,7 +15,7 @@ namespace DivergenceEngine
 	private:
 		inline static std::vector<std::unique_ptr<Window>> ListOfApplicationWindows;
 		inline static DX::StepTimer Timer;
-		inline static uint32_t FrameRate = 60;
+		inline static uint32_t FrameRate;
 		
 	protected:
 		HINSTANCE ProcessInstance = nullptr;

@@ -6,7 +6,7 @@
 //Sends the Application object to the Engine
 DivergenceEngine::Application* DivergenceEngine::CreateApplication(LPWSTR lpCmdLine)
 {
-	return new Demo(lpCmdLine, 60);
+	return new Demo(lpCmdLine, 0);
 }
 
 //Class functions----------------------------------------------------------------------------------
