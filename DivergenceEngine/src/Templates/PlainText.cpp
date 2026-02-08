@@ -3,7 +3,7 @@
 
 namespace DivergenceEngine::Templates
 {
-	PlainText::PlainText(std::weak_ptr<Graphics> graphicsController, const std::wstring& textString, const std::wstring& spriteFontPath, DirectX::SimpleMath::Vector2 positionCoord, TextOriginClass originClass, DirectX::FXMVECTOR colour, bool dropShadow):
+	PlainText::PlainText(std::weak_ptr<Graphics> graphicsController, const std::wstring& textString, const std::wstring& spriteFontPath, DirectX::SimpleMath::Vector2 positionCoord, TextOriginClass originClass, DirectX::SimpleMath::Color colour, bool dropShadow):
 		WindowGraphicsController(graphicsController),
 		TextString(textString),
 		PositionCoord(positionCoord),
@@ -31,6 +31,16 @@ namespace DivergenceEngine::Templates
 	{
 		TextString = textString;
 		OriginCoord = ComputeOrigin(TextOriginClass::TopLeft);
+	}
+
+	void PlainText::SetDropShadow(bool dropShadow) noexcept
+	{
+		DropShadow = dropShadow;
+	}
+
+	void PlainText::SetColour(DirectX::SimpleMath::Color colour) noexcept
+	{
+		Colour = colour;
 	}
 
 	void PlainText::Draw()

@@ -1,40 +1,43 @@
+/*
 #pragma once
-#include "Templates/UnclickableDrawable.h"
+#include "Templates/PlainText.h"
 #include "Graphics/Graphics.h"
-#include <string>
 
 namespace DivergenceEngine::Templates
 {
-	class PlainText : public DivergenceEngine::UnclickableDrawable
+	class BoundedText : public DivergenceEngine::UnclickableDrawable
 	{
 	public:
-		enum class TextOriginClass
+		enum class PrintLinesOrientationClass
 		{
-			TopLeft,
-			TopCentre,
-			TopRight,
+			PrintFromTop,
+			PrintFromCentre,
+			PrintFromBottom
+		};
+
+		enum class TextAlignmentClass
+		{
+			Left,
 			Centre,
-			BottomLeft,
-			BottomCentre,
-			BottomRight
+			Right
 		};
 
 	private:
 		//Datafields
 		std::wstring TextString;
+		std::vector<PlainText> TextLines;
 		DirectX::SimpleMath::Vector2 PositionCoord;
-		DirectX::SimpleMath::Vector2 OriginCoord;
+		DirectX::SimpleMath::Rectangle BoundingRectangle;
+		PrintLinesOrientationClass PrintLinesOrientation;
+		TextAlignmentClass TextAlignment;
 		DirectX::SimpleMath::Color Colour;
 		bool DropShadow;
 		std::weak_ptr<DirectX::SpriteFont> SpriteFont;
 		std::weak_ptr<Graphics> WindowGraphicsController;
 
-		//Helpers
-		DirectX::SimpleMath::Vector2 ComputeOrigin(TextOriginClass originClass) noexcept;
-
 	public:
 		//Constructors and Destructor
-		PlainText(std::weak_ptr<Graphics> graphicsController, const std::wstring& textString, const std::wstring& spriteFontPath, DirectX::SimpleMath::Vector2 positionCoord, TextOriginClass originClass = TextOriginClass::TopLeft, DirectX::SimpleMath::Color colour = DirectX::Colors::White.v, bool dropShadow = false);
+		BoundedText(std::weak_ptr<Graphics> graphicsController, const std::wstring& textString, const std::wstring& spriteFontPath, DirectX::SimpleMath::Rectangle boundingRectangle, PrintLinesOrientationClass printLinesOrientation, TextAlignmentClass textAlignment, DirectX::SimpleMath::Color colour = DirectX::Colors::White.v, bool dropShadow = true);
 
 		//Getters
 		DirectX::SimpleMath::Rectangle GetBoundingRectangle() const noexcept;
@@ -44,9 +47,9 @@ namespace DivergenceEngine::Templates
 		void SetDropShadow(bool dropShadow) noexcept;
 		void SetColour(DirectX::SimpleMath::Color colour) noexcept;
 
-
 		//Overriden functions
 		void Draw() override;
 		bool IsCoordInObject(DirectX::XMINT2 mousePos) override;
 	};
 }
+*/

@@ -18,8 +18,8 @@ void TypableTitlePage::Initialize(DivergenceEngine::Window* windowReference)
 	std::shared_ptr<DivergenceEngine::Templates::Image> backgroundImage = std::make_shared<DivergenceEngine::Templates::Image>(L"Images\\TypableTitlePage\\Plains.jpg", WindowReference->GraphicsController, DirectX::SimpleMath::Vector2(0, 0));
 	WindowReference->AddDrawableComponent(backgroundImage, 0);
 
-	//Load hello world text onto screen
-	ScreenText = std::make_shared<DivergenceEngine::Templates::PlainText>(WindowReference->GraphicsController, L"The quick brown fox jumps over the lazy dog!", DefaultFonts::GetFontPath(DefaultFonts::DefaultFontIndices::M_PLUS_1_Size20), DirectX::SimpleMath::Vector2(bufferSize.x/2, 400), DivergenceEngine::Templates::PlainText::TextOriginClass::Centre, DirectX::Colors::White, true);
+	//Load hello world text onto screen (NOTE: You must do .v to the DirectX::Colors::White to get the color in the correct format for the PlainText constructor, otherwise it will be a compile error)
+	ScreenText = std::make_shared<DivergenceEngine::Templates::PlainText>(WindowReference->GraphicsController, L"The quick brown fox jumps over the lazy dog!", DefaultFonts::GetFontPath(DefaultFonts::DefaultFontIndices::M_PLUS_1_Size20), DirectX::SimpleMath::Vector2(bufferSize.x/2, 400), DivergenceEngine::Templates::PlainText::TextOriginClass::Centre, DirectX::Colors::White.v, true);
 	WindowReference->AddDrawableComponent(ScreenText, 2);
 
 	DivergenceEngine::Logger::Log(L"TypableTitlePage constructed");

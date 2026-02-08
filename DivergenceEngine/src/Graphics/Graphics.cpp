@@ -174,7 +174,7 @@ namespace DivergenceEngine
 	}
 
 	//Font drawing functions-----------------------------------------------------------------------
-	void Graphics::DrawString(DirectX::SpriteFont* spriteFont, std::wstring text, DirectX::SimpleMath::Vector2 positionCoord, DirectX::SimpleMath::Vector2 origin, DirectX::FXMVECTOR colour, bool dropShadow)
+	void Graphics::DrawString(DirectX::SpriteFont* spriteFont, std::wstring text, DirectX::SimpleMath::Vector2 positionCoord, DirectX::SimpleMath::Vector2 origin, DirectX::SimpleMath::Color colour, bool dropShadow)
 	{
 		BeginSpriteBatch();
 
