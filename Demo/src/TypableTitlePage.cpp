@@ -57,24 +57,6 @@ void TypableTitlePage::UpdatePage(const DX::StepTimer& timer)
 			break;
 		}
 	}
-
-	//Handle the key queue
-	while (!WindowReference->KeyboardObject.KeyQueueIsEmpty())
-	{
-		//Get the key code
-		DivergenceEngine::Keyboard::Event currentEvent = *WindowReference->KeyboardObject.ReadKey();
-
-		//If the key is pressed
-		if (currentEvent.IsPress())
-		{
-			//DivergenceEngine::Logger::RawLog(std::format(L"Pressed Key Code: {:#02x}", currentEvent.GetCode()));
-		}
-
-		else
-		{
-			//DivergenceEngine::Logger::RawLog(std::format(L"Released Key Code: {:#02x}", currentEvent.GetCode()));
-		}
-	}
 }
 
 bool TypableTitlePage::OnWindowDestructionRequest()

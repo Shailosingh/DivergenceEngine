@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "C:\\Code Projects\\C++ Projects\\DivergenceEngine\\bin-int\\Debug-x64\\Demo\\PlainText.obj",
+            "outputs": [
+                "C:\\Code Projects\\C++ Projects\\DivergenceEngine\\bin-int\\Debug-x64\\Demo\\PlainText.h.obj.dt.module.json",
+                "C:\\Code Projects\\C++ Projects\\DivergenceEngine\\bin-int\\Debug-x64\\Demo\\PlainText.h.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

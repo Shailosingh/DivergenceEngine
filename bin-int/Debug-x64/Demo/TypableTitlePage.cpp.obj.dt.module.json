@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "C:\\Code Projects\\C++ Projects\\DivergenceEngine\\bin-int\\Debug-x64\\Demo\\TypableTitlePage.obj",
+            "outputs": [
+                "C:\\Code Projects\\C++ Projects\\DivergenceEngine\\bin-int\\Debug-x64\\Demo\\TypableTitlePage.cpp.obj.dt.module.json",
+                "C:\\Code Projects\\C++ Projects\\DivergenceEngine\\bin-int\\Debug-x64\\Demo\\TypableTitlePage.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}
