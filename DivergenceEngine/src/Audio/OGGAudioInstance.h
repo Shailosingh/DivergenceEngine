@@ -16,7 +16,7 @@ namespace DivergenceEngine
 		DirectX::AudioEngine* EnginePointer;
 		std::unique_ptr<DirectX::DynamicSoundEffectInstance> SoundEffectInstance;
 		uint8_t PlaybackSpeedMultiplier;
-		bool IsLoop;
+		std::atomic<bool> IsLoop;
 
 		//Buffer variables
 		const static uint32_t MAX_BUFFERS = 5;
