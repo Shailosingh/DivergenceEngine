@@ -2,6 +2,7 @@
 #include "Logger/Logger.h"
 #include <filesystem>
 #include <memory>
+#include <StringConverter.h>
 
 namespace fs = std::filesystem;
 
@@ -68,6 +69,26 @@ namespace DivergenceEngine
 			else if (currentBytesRead > 0)
 			{
 				totalBytesRead += currentBytesRead;
+			}
+
+			else if (currentBytesRead == OV_HOLE)
+			{
+				Logger::Log(std::format(L"OV_HOLE error in '{}', continuing...", FilePath));
+				continue;
+			}
+
+			// OV_EBADLINK, OV_EINVAL, OV_EREAD, OV_EFAULT…
+			else
+			{
+				//The file is likely corrupted and unable to decode
+				std::wstring message = std::format(L"Failed to decode audio file '{}' (Vorbis error {})", FilePath, currentBytesRead);
+				Logger::Log(message);
+
+				//Displays message box letting user know the error
+				MessageBoxW(nullptr, message.c_str(), L"Audio Error", MB_OK | MB_ICONERROR);
+
+				//Crash or allow upper layer to catch
+				throw std::runtime_error(StringConverter::ConvertWideStringToANSI(message));
 			}
 		}
 

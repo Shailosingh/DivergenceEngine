@@ -8,6 +8,7 @@
 #include <format>
 #include <thread>
 #include <exception>
+#include <StringConverter.h>
 
 //https://xiph.org/vorbis/doc/vorbisfile/overview.html
 //https://github.com/edubart/minivorbis
@@ -190,14 +191,15 @@ namespace DivergenceEngine
 		//Lock the current bank
 		std::unique_lock<std::mutex> lock(BankMutexArray[CurrentBankIndex]);
 
-		//If the bank has 0 size, the file must be over
-		if (TrueBankSizeArray[CurrentBankIndex] == 0)
-		{
-			StopLoadingBuffers = true;
-		}
-
 		while (!StopLoadingBuffers && instance->GetState() == DirectX::PLAYING && instance->GetPendingBufferCount() <= MAX_BUFFERS)
 		{
+			//If the bank has 0 size, the file must be over
+			if (TrueBankSizeArray[CurrentBankIndex] == 0)
+			{
+				StopLoadingBuffers = true;
+				break;
+			}
+
 			//Submit the next buffer
 			long bufferSize = std::min(MAX_BUFFER_SIZE, TrueBankSizeArray[CurrentBankIndex] - CurrentBankDataIndex);
 			instance->SubmitBuffer(reinterpret_cast<uint8_t*>(&BankArray[CurrentBankIndex][CurrentBankDataIndex]), bufferSize);
@@ -289,6 +291,26 @@ namespace DivergenceEngine
 			else if (currentBytesRead > 0)
 			{
 				TrueBankSizeArray[bankIndex] += currentBytesRead;
+			}
+
+			else if (currentBytesRead == OV_HOLE)
+			{
+				Logger::Log(std::format(L"OV_HOLE error in '{}', continuing...", FilePath));
+				continue;
+			}
+
+			// OV_EBADLINK, OV_EINVAL, OV_EREAD, OV_EFAULT…
+			else
+			{
+				//The file is likely corrupted and unable to decode
+				std::wstring message = std::format(L"Failed to decode audio file '{}' (Vorbis error {})", FilePath, currentBytesRead);
+				Logger::Log(message);
+
+				//Displays message box letting user know the error
+				MessageBoxW(nullptr, message.c_str(), L"Audio Error", MB_OK | MB_ICONERROR);
+
+				//Crash or allow upper layer to catch
+				throw std::runtime_error(StringConverter::ConvertWideStringToANSI(message));
 			}
 		}
 		//Logger::Log(std::format(L"Finished loading bank {}", bankIndex));
