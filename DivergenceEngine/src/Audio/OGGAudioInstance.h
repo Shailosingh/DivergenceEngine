@@ -15,12 +15,11 @@ namespace DivergenceEngine
 		//General Datafields
 		DirectX::AudioEngine* EnginePointer;
 		std::unique_ptr<DirectX::DynamicSoundEffectInstance> SoundEffectInstance;
-		uint8_t PlaybackSpeedMultiplier;
+		std::atomic<PlaybackSpeed> CurrentPlaybackSpeed;
 		std::atomic<bool> IsLoop;
 
 		//Buffer variables
 		const static uint32_t MAX_BUFFERS = 5;
-		const static long MAX_BUFFER_SIZE = 2 * 1024;
 		const static uint32_t NUMBER_OF_BANKS = 2;
 		const static uint32_t NUMBER_OF_EVENTS = NUMBER_OF_BANKS + 1;
 		const static uint32_t THREAD_EXIT_EVENT_INDEX = NUMBER_OF_EVENTS - 1;
@@ -34,6 +33,10 @@ namespace DivergenceEngine
 		std::array<std::mutex, NUMBER_OF_BANKS> BankMutexArray;
 		std::array<std::atomic<bool>, NUMBER_OF_EVENTS> BankLoadEventArray;
 		std::thread BankLoadingThreadObject;
+
+		//Signals for stopping
+		std::atomic<bool> RestartRequested{ false };  // main → loader
+		std::atomic<bool> BanksRefreshed{ false };    // loader → audio
 
 		//Buffer functions
 		void BufferNeeded(DirectX::DynamicSoundEffectInstance* instance);
@@ -50,7 +53,7 @@ namespace DivergenceEngine
 
 	public:
 		//Constructors and Destructors
-		OGGAudioInstance(DirectX::AudioEngine* engine, std::wstring filePath, uint8_t initialPlaybackSpeedMultiplier = 1, float initialVolume = 1);
+		OGGAudioInstance(DirectX::AudioEngine* engine, std::wstring filePath, PlaybackSpeed initialPlaybackSpeed = PlaybackSpeed::Normal, float initialVolume = 1);
 		~OGGAudioInstance();
 
 		//Overriden functions
@@ -59,6 +62,6 @@ namespace DivergenceEngine
 		void Pause() override;
 		void Resume() override;
 		void SetVolume(float newVolume) override;
-		void SetPlaybackSpeedMultiplier(uint8_t newPlaybackSpeedMultiplier) override;
+		void SetPlaybackSpeed(PlaybackSpeed newPlaybackSpeed) override;
 	};
 }

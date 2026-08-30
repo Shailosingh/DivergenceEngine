@@ -10,7 +10,7 @@ namespace fs = std::filesystem;
 
 namespace DivergenceEngine
 {
-	WAVAudioInstance::WAVAudioInstance(DirectX::AudioEngine* engine, std::wstring filePath, uint8_t initialPlaybackSpeedMultiplier, float initialVolume)
+	WAVAudioInstance::WAVAudioInstance(DirectX::AudioEngine* engine, std::wstring filePath, PlaybackSpeed initialPlaybackSpeed, float initialVolume)
 	{
 		//Handle invalid parameters
 		if (engine == nullptr)
@@ -19,11 +19,6 @@ namespace DivergenceEngine
 		}
 		EnginePointer = engine;
 
-		if (initialPlaybackSpeedMultiplier == 0)
-		{
-			throw std::invalid_argument("WAVAudioInstance::WAVAudioInstance() - initialPlaybackSpeedMultiplier cannot be 0");
-		}
-		PlaybackSpeedMultiplier = initialPlaybackSpeedMultiplier;
 
 		if (initialVolume > 1 || initialVolume < 0)
 		{
@@ -94,12 +89,16 @@ namespace DivergenceEngine
 		SoundEffectInstance = std::make_unique<DirectX::DynamicSoundEffectInstance>(
 			EnginePointer,
 			std::bind(&WAVAudioInstance::BufferNeeded, this, std::placeholders::_1),
-			FileInfo.FormatChunk.SampleRate*PlaybackSpeedMultiplier,
+			FileInfo.FormatChunk.SampleRate * 2, //This is multiplied by two to make 1x, 2x, 4x speedup possible by just pitching using DXTK function (this will 2x the speed by default, making -1.0 pitch 1x and +1.0 4 speed)
 			FileInfo.FormatChunk.NumChannels,
 			FileInfo.FormatChunk.BitsPerSample);
 
 		//Set the volume
 		SoundEffectInstance->SetVolume(initialVolume);
+
+		//Set the playback speed
+		CurrentPlaybackSpeed = initialPlaybackSpeed;
+		SetPlaybackSpeed(CurrentPlaybackSpeed);
 
 		Logger::Log(std::format(L"Loaded {}", FileInfo.FilePath));
 	}
@@ -148,38 +147,21 @@ namespace DivergenceEngine
 		SoundEffectInstance->SetVolume(volume);
 	}
 
-	void WAVAudioInstance::SetPlaybackSpeedMultiplier(uint8_t newPlaybackSpeedMultiplier)
+	void WAVAudioInstance::SetPlaybackSpeed(PlaybackSpeed newPlaybackSpeed)
 	{
-		//Ensure that the new playback speed multiplier is not 0
-		if (newPlaybackSpeedMultiplier == 0)
-		{
-			throw std::invalid_argument("WAVAudioInstance::SetPlaybackSpeedMultiplier() - newPlaybackSpeedMultiplier cannot be 0");
-		}
+		CurrentPlaybackSpeed = newPlaybackSpeed;
 
-		//If the new playback speed is unchanged, do nothing
-		if (PlaybackSpeedMultiplier == newPlaybackSpeedMultiplier)
+		if (newPlaybackSpeed == PlaybackSpeed::Normal)
 		{
-			return;
+			SoundEffectInstance->SetPitch(-1.0f);
 		}
-		
-		//Check if the song is already playing and if it was looping
-		bool isPlaying = SoundEffectInstance->GetState() == DirectX::SoundState::PLAYING;
-		
-		//Reset the instance with the altered sample rate based on the new playback speed multiplier
-		this->Pause();
-		PlaybackSpeedMultiplier = newPlaybackSpeedMultiplier;
-		SoundEffectInstance = std::make_unique<DirectX::DynamicSoundEffectInstance>(
-			EnginePointer,
-			std::bind(&WAVAudioInstance::BufferNeeded, this, std::placeholders::_1),
-			FileInfo.FormatChunk.SampleRate * PlaybackSpeedMultiplier,
-			FileInfo.FormatChunk.NumChannels,
-			FileInfo.FormatChunk.BitsPerSample);
-		
-		this->Play(IsLoop);
-
-		if (!isPlaying)
+		else if (newPlaybackSpeed == PlaybackSpeed::Double)
 		{
-			this->Pause();
+			SoundEffectInstance->SetPitch(0.0f);
+		}
+		else if (newPlaybackSpeed == PlaybackSpeed::Quadruple)
+		{
+			SoundEffectInstance->SetPitch(1.0f);
 		}
 	}
 
@@ -187,9 +169,10 @@ namespace DivergenceEngine
 	void WAVAudioInstance::BufferNeeded(DirectX::DynamicSoundEffectInstance* instance)
 	{		
 		//Get the target buffer size
-		//If the byte rate is 176400 and a max number of buffers is 5, then 2048*5/176400 = 0.05 seconds (pretty good buffer sizing for latency, don't hear crackling either)
+		//If the byte rate is 176400 and a max number of buffers is 5, then 2048*5/176400 ~= 0.058 (128/2205) seconds (pretty good buffer sizing for latency, don't hear crackling either)
 		//Multiplying by PlaybackSpeed so the buffers can keep up without crackle (might cause latency, check later)
-		uint32_t targetBufferSize = 2048*PlaybackSpeedMultiplier;
+		//Since max buffers and byte rate can technically change (I will for 0.058 second latency I will calculate ((byteRate*128) / (MAX_NUM_BANKS*2205))*PlaybackSpeed)
+		uint32_t targetBufferSize = ((128*FileInfo.FormatChunk.ByteRate)/(2205* MAX_BUFFERS))*static_cast<uint32_t>(CurrentPlaybackSpeed.load());
 
 		//This while loop ensures all the buffers needed are given at one time and the callback doesn't have to constantly be called killing performance
 		while (!StopLoadingBuffers && instance->GetState() == DirectX::PLAYING && instance->GetPendingBufferCount() <= MAX_BUFFERS)

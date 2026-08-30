@@ -8,8 +8,8 @@ void MainMenuPage::Initialize(DivergenceEngine::Window* windowReference)
 	WindowReference = windowReference;
 
 	//Load background music
-	//BackgroundMusic = std::make_unique<DivergenceEngine::WAVAudioInstance>(WindowReference->AudioController.get(), L"Audio\\MainMenu.wav", 1);
-	BackgroundMusic = std::make_unique<DivergenceEngine::OGGAudioInstance>(WindowReference->AudioController.get(), L"Audio\\MainMenu.ogg", 1);
+	//BackgroundMusic = std::make_unique<DivergenceEngine::WAVAudioInstance>(WindowReference->AudioController.get(), L"Audio\\MainMenu.wav");
+	BackgroundMusic = std::make_unique<DivergenceEngine::OGGAudioInstance>(WindowReference->AudioController.get(), L"Audio\\MainMenu.ogg");
 	BackgroundMusic->Play(true);
 
 	//Load the menu sound effect
@@ -111,12 +111,17 @@ void MainMenuPage::UpdatePage(const DX::StepTimer& timer)
 
 		//1 key
 		case '1':
-			BackgroundMusic->SetPlaybackSpeedMultiplier(1);
+			BackgroundMusic->SetPlaybackSpeed(DivergenceEngine::PlaybackSpeed::Normal);
 			break;
 			
 		//2 key
 		case '2':
-			BackgroundMusic->SetPlaybackSpeedMultiplier(2);
+			BackgroundMusic->SetPlaybackSpeed(DivergenceEngine::PlaybackSpeed::Double);
+			break;
+
+		//3 key
+		case '3':
+			BackgroundMusic->SetPlaybackSpeed(DivergenceEngine::PlaybackSpeed::Quadruple);
 			break;
 
 		//Space key

@@ -1,10 +1,9 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "c:\\code projects\\c++ projects\\divergenceengine\\demo\\src\\mainmenupage.cpp",
+        "Source": "c:\\code projects\\c++ projects\\divergenceengine\\demo\\src\\mainmenupage.h",
         "ProvidedModule": "",
         "Includes": [
-            "c:\\code projects\\c++ projects\\divergenceengine\\demo\\src\\mainmenupage.h",
             "c:\\code projects\\c++ projects\\divergenceengine\\divergenceengine\\src\\divergenceengine.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.28000.0\\um\\windows.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.28000.0\\shared\\winapifamily.h",
@@ -484,8 +483,7 @@
             "c:\\code projects\\c++ projects\\divergenceengine\\divergenceengine\\src\\templates\\unclickabledrawable.h",
             "c:\\code projects\\c++ projects\\divergenceengine\\divergenceengine\\src\\templates\\buttonmenu.h",
             "c:\\code projects\\c++ projects\\divergenceengine\\divergenceengine\\src\\templates\\invisibledrawable.h",
-            "c:\\code projects\\c++ projects\\divergenceengine\\divergenceengine\\src\\templates\\plaintext.h",
-            "c:\\code projects\\c++ projects\\divergenceengine\\demo\\src\\typabletitlepage.h"
+            "c:\\code projects\\c++ projects\\divergenceengine\\divergenceengine\\src\\templates\\plaintext.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

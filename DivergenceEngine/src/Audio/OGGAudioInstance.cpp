@@ -15,7 +15,7 @@
 
 namespace DivergenceEngine
 {
-	OGGAudioInstance::OGGAudioInstance(DirectX::AudioEngine* engine, std::wstring filePath, uint8_t initialPlaybackSpeedMultiplier, float initialVolume)
+	OGGAudioInstance::OGGAudioInstance(DirectX::AudioEngine* engine, std::wstring filePath, PlaybackSpeed initialPlaybackSpeed, float initialVolume)
 	{
 		//Handle invalid parameters
 		if (engine == nullptr)
@@ -23,12 +23,6 @@ namespace DivergenceEngine
 			throw std::invalid_argument("OGGAudioInstance::OGGAudioInstance() - engine cannot be nullptr");
 		}
 		EnginePointer = engine;
-
-		if (initialPlaybackSpeedMultiplier == 0)
-		{
-			throw std::invalid_argument("OGGAudioInstance::OGGAudioInstance() - initialPlaybackSpeedMultiplier cannot be 0");
-		}
-		PlaybackSpeedMultiplier = initialPlaybackSpeedMultiplier;
 
 		if (initialVolume > 1 || initialVolume < 0)
 		{
@@ -77,13 +71,17 @@ namespace DivergenceEngine
 			(
 				EnginePointer,
 				std::bind(&OGGAudioInstance::BufferNeeded, this, std::placeholders::_1),
-				VorbisInfo->rate * PlaybackSpeedMultiplier,
+				VorbisInfo->rate * 2, //This is multiplied by two to make 1x, 2x, 4x speedup possible by just pitching using DXTK function (this will 2x the speed by default, making -1.0 pitch 1x and +1.0 4 speed)
 				VorbisInfo->channels,
 				BIT_DEPTH
 			);
 
 		//Set the volume
 		SoundEffectInstance->SetVolume(initialVolume);
+
+		//Set the playback speed
+		CurrentPlaybackSpeed = initialPlaybackSpeed;
+		SetPlaybackSpeed(CurrentPlaybackSpeed);
 
 		//Load all banks
 		for (uint32_t index = 0; index < NUMBER_OF_BANKS; index++)
@@ -127,7 +125,7 @@ namespace DivergenceEngine
 	void OGGAudioInstance::Stop()
 	{
 		SoundEffectInstance->Stop();
-		ov_pcm_seek(&VorbisFileObject, 0);
+		RestartRequested = true;
 	}
 
 	void OGGAudioInstance::Pause()
@@ -150,44 +148,39 @@ namespace DivergenceEngine
 		SoundEffectInstance->SetVolume(volume);
 	}
 
-	void OGGAudioInstance::SetPlaybackSpeedMultiplier(uint8_t newPlaybackSpeedMultiplier)
+	void OGGAudioInstance::SetPlaybackSpeed(PlaybackSpeed newPlaybackSpeed)
 	{
-		//Ensure that the new playback speed multiplier is not 0
-		if (newPlaybackSpeedMultiplier == 0)
+		CurrentPlaybackSpeed = newPlaybackSpeed;
+
+		if (newPlaybackSpeed == PlaybackSpeed::Normal)
 		{
-			throw std::invalid_argument("OGGAudioInstance::SetPlaybackSpeedMultiplier() - newPlaybackSpeedMultiplier cannot be 0");
+			SoundEffectInstance->SetPitch(-1.0f);
 		}
-
-		//If the new playback speed is unchanged, do nothing
-		if (PlaybackSpeedMultiplier == newPlaybackSpeedMultiplier)
+		else if (newPlaybackSpeed == PlaybackSpeed::Double)
 		{
-			return;
+			SoundEffectInstance->SetPitch(0.0f);
 		}
-
-		//Check if the song is already playing and if it was looping
-		bool isPlaying = SoundEffectInstance->GetState() == DirectX::SoundState::PLAYING;
-
-		//Reset the instance with the altered sample rate based on the new playback speed multiplier
-		this->Pause();
-		PlaybackSpeedMultiplier = newPlaybackSpeedMultiplier;
-		SoundEffectInstance = std::make_unique<DirectX::DynamicSoundEffectInstance>
-			(
-				EnginePointer,
-				std::bind(&OGGAudioInstance::BufferNeeded, this, std::placeholders::_1),
-				VorbisInfo->rate * PlaybackSpeedMultiplier,
-				VorbisInfo->channels,
-				BIT_DEPTH
-			);
-		this->Play(IsLoop);
-
-		if (!isPlaying)
+		else if (newPlaybackSpeed == PlaybackSpeed::Quadruple)
 		{
-			this->Pause();
+			SoundEffectInstance->SetPitch(1.0f);
 		}
 	}
 
 	void OGGAudioInstance::BufferNeeded(DirectX::DynamicSoundEffectInstance* instance)
 	{
+		//Check if the banks have been refreshed, if so, reset the current bank index and data index
+		if (BanksRefreshed)
+		{
+			BanksRefreshed = false;
+			CurrentBankIndex = 0;
+			CurrentBankDataIndex = 0;
+			StopLoadingBuffers = false;
+		}
+
+		//Calculate max buffer size the same way as done in WAVs using ((byteRate*128) / (MAX_NUM_BANKS*2205))*PlaybackSpeed
+		long pcmByteRate = BlockAlign * VorbisInfo->rate;
+		long targetBufferSize = ((128 * pcmByteRate) / (2205 * MAX_BUFFERS)) * static_cast<uint32_t>(CurrentPlaybackSpeed.load());
+
 		//Lock the current bank
 		std::unique_lock<std::mutex> lock(BankMutexArray[CurrentBankIndex]);
 
@@ -201,7 +194,7 @@ namespace DivergenceEngine
 			}
 
 			//Submit the next buffer
-			long bufferSize = std::min(MAX_BUFFER_SIZE, TrueBankSizeArray[CurrentBankIndex] - CurrentBankDataIndex);
+			long bufferSize = std::min(targetBufferSize, TrueBankSizeArray[CurrentBankIndex] - CurrentBankDataIndex);
 			instance->SubmitBuffer(reinterpret_cast<uint8_t*>(&BankArray[CurrentBankIndex][CurrentBankDataIndex]), bufferSize);
 			CurrentBankDataIndex += bufferSize;
 
@@ -235,6 +228,29 @@ namespace DivergenceEngine
 			while (searchingForSignal)
 			{
 				Sleep(500);
+
+				if (RestartRequested)
+				{
+					RestartRequested = false;
+
+					//Halt any new refill bank signal events to ensure banks don't get refilled by stale bank load events
+					for (size_t index = 0; index < NUMBER_OF_BANKS; index++)
+					{
+						BankLoadEventArray[index] = false;
+					}
+
+					//Seek to the beginning of the file
+					ov_pcm_seek(&VorbisFileObject, 0);
+
+					//Load all banks
+					for (uint32_t index = 0; index < NUMBER_OF_BANKS; index++)
+					{
+						LoadBank(index);
+					}
+
+					//Signal to the audio thread that the banks have been refreshed
+					BanksRefreshed = true;
+				}
 
 				for (uint32_t index = 0; index < NUMBER_OF_EVENTS; index++)
 				{

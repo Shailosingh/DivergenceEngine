@@ -19,7 +19,7 @@ namespace DivergenceEngine
 		//General Datafields
 		DirectX::AudioEngine* EnginePointer;
 		std::unique_ptr<DirectX::DynamicSoundEffectInstance> SoundEffectInstance;
-		uint8_t PlaybackSpeedMultiplier;
+		std::atomic<PlaybackSpeed> CurrentPlaybackSpeed;
 		bool IsLoop;
 
 		//Buffer variables
@@ -41,7 +41,7 @@ namespace DivergenceEngine
 		
 	public:
 		//Constructors and destructors
-		WAVAudioInstance(DirectX::AudioEngine* engine, std::wstring filePath, uint8_t initialPlaybackSpeedMultiplier = 1, float initialVolume = 1);
+		WAVAudioInstance(DirectX::AudioEngine* engine, std::wstring filePath, PlaybackSpeed initialPlaybackSpeed = PlaybackSpeed::Normal, float initialVolume = 1);
 		~WAVAudioInstance();
 
 		//Overriden functions
@@ -50,6 +50,6 @@ namespace DivergenceEngine
 		void Pause() override;
 		void Resume() override;
 		void SetVolume(float newVolume) override;
-		void SetPlaybackSpeedMultiplier(uint8_t newPlaybackSpeedMultiplier) override;
+		void SetPlaybackSpeed(PlaybackSpeed newPlaybackSpeed) override;
 	};
 }

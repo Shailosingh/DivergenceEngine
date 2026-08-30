@@ -3,6 +3,13 @@
 
 namespace DivergenceEngine
 {
+	enum class PlaybackSpeed
+	{
+		Normal = 1,
+		Double = 2,
+		Quadruple = 4
+	};
+
 	class IAudioInstance
 	{
 	public:
@@ -18,6 +25,6 @@ namespace DivergenceEngine
 
 		virtual void SetVolume(float newVolume) = 0;
 
-		virtual void SetPlaybackSpeedMultiplier(uint8_t newPlaybackSpeedMultiplier) = 0;
+		virtual void SetPlaybackSpeed(PlaybackSpeed newPlaybackSpeed) = 0;
 	};
 }
