@@ -181,8 +181,11 @@ namespace DivergenceEngine
 		long pcmByteRate = BlockAlign * VorbisInfo->rate;
 		long targetBufferSize = ((128 * pcmByteRate) / (2205 * MAX_BUFFERS)) * static_cast<uint32_t>(CurrentPlaybackSpeed.load());
 
-		//Lock the current bank
-		std::unique_lock<std::mutex> lock(BankMutexArray[CurrentBankIndex]);
+		//If the current bank is signaled for refill, return early as it is not time to use the bank
+		if (BankLoadEventArray[CurrentBankIndex])
+		{
+			return;
+		}
 
 		while (!StopLoadingBuffers && instance->GetState() == DirectX::PLAYING && instance->GetPendingBufferCount() <= MAX_BUFFERS)
 		{
@@ -204,9 +207,13 @@ namespace DivergenceEngine
 				BankLoadEventArray[CurrentBankIndex] = true;
 
 				CurrentBankIndex = (CurrentBankIndex + 1) % NUMBER_OF_BANKS;
-				lock = std::unique_lock<std::mutex>(BankMutexArray[CurrentBankIndex]);
-
 				CurrentBankDataIndex = 0;
+
+				//If the current bank is signaled for refill, return early as it is not time to use the bank
+				if (BankLoadEventArray[CurrentBankIndex])
+				{
+					return;
+				}
 			}
 		}
 
@@ -233,10 +240,10 @@ namespace DivergenceEngine
 				{
 					RestartRequested = false;
 
-					//Halt any new refill bank signal events to ensure banks don't get refilled by stale bank load events
+					//Mark all banks as requiring a refill
 					for (size_t index = 0; index < NUMBER_OF_BANKS; index++)
 					{
-						BankLoadEventArray[index] = false;
+						BankLoadEventArray[index] = true;
 					}
 
 					//Seek to the beginning of the file
@@ -248,6 +255,12 @@ namespace DivergenceEngine
 						LoadBank(index);
 					}
 
+					//Mark all banks filled
+					for (size_t index = 0; index < NUMBER_OF_BANKS; index++)
+					{
+						BankLoadEventArray[index] = false;
+					}
+
 					//Signal to the audio thread that the banks have been refreshed
 					BanksRefreshed = true;
 				}
@@ -257,7 +270,6 @@ namespace DivergenceEngine
 					if (BankLoadEventArray[index])
 					{
 						signalCode = index;
-						BankLoadEventArray[index] = false;
 						searchingForSignal = false;
 						break;
 					}
@@ -272,6 +284,7 @@ namespace DivergenceEngine
 
 			//If it has made it here, the signal is to load a new bank
 			LoadBank(signalCode);
+			BankLoadEventArray[signalCode] = false;
 		}
 
 		ThreadIsRunning = false;
@@ -279,9 +292,7 @@ namespace DivergenceEngine
 
 	void OGGAudioInstance::LoadBank(uint32_t bankIndex)
 	{
-		//Lock the bank
-		std::lock_guard<std::mutex> lock(BankMutexArray[bankIndex]);
-		//Logger::Log(std::format(L"Begin loading bank {}", bankIndex));
+		//NOTE: This used to have a mutex to prevent reads from audio thread while writing here. This is handled by the BankLoadEventArray now outside of this function so no synchronization required here anymore as it is handled elsewhere
 
 		//Fill the bank until it is either full or the file is finished and loop is disabled
 		TrueBankSizeArray[bankIndex] = 0;

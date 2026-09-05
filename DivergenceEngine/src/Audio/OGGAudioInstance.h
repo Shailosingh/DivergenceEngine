@@ -3,9 +3,9 @@
 #include "vorbis/vorbisfile.h"
 #include <array>
 #include <vector>
-#include <mutex>
 #include <Windows.h>
 #include <atomic>
+#include <thread>
 
 namespace DivergenceEngine
 {
@@ -30,7 +30,6 @@ namespace DivergenceEngine
 		bool StopLoadingBuffers = false;
 		std::array<std::array<uint8_t, MAX_BANK_SIZE>, NUMBER_OF_BANKS> BankArray;
 		std::array<long, NUMBER_OF_BANKS> TrueBankSizeArray;
-		std::array<std::mutex, NUMBER_OF_BANKS> BankMutexArray;
 		std::array<std::atomic<bool>, NUMBER_OF_EVENTS> BankLoadEventArray;
 		std::thread BankLoadingThreadObject;
 
@@ -49,7 +48,7 @@ namespace DivergenceEngine
 		vorbis_info* VorbisInfo;
 		ogg_int64_t TotalSamples;
 		const int BIT_DEPTH = 16;
-		uint64_t BlockAlign;
+		uint32_t BlockAlign;
 
 	public:
 		//Constructors and Destructors
