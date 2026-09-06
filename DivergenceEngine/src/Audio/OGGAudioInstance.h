@@ -28,6 +28,7 @@ namespace DivergenceEngine
 		long CurrentBankDataIndex = 0;
 		bool ThreadIsRunning;
 		bool StopLoadingBuffers = false;
+		HANDLE BankLoadEventHandle;
 		std::array<std::array<uint8_t, MAX_BANK_SIZE>, NUMBER_OF_BANKS> BankArray;
 		std::array<long, NUMBER_OF_BANKS> TrueBankSizeArray;
 		std::array<std::atomic<bool>, NUMBER_OF_EVENTS> BankLoadEventArray;

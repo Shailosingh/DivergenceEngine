@@ -83,6 +83,13 @@ namespace DivergenceEngine
 		CurrentPlaybackSpeed = initialPlaybackSpeed;
 		SetPlaybackSpeed(CurrentPlaybackSpeed);
 
+		//Initialize bank event
+		BankLoadEventHandle = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+		if (BankLoadEventHandle == nullptr)
+		{
+			throw std::runtime_error("OGGAudioInstance::OGGAudioInstance() - Failed to create bank load event");
+		}
+
 		//Load all banks
 		for (uint32_t index = 0; index < NUMBER_OF_BANKS; index++)
 		{
@@ -108,9 +115,13 @@ namespace DivergenceEngine
 
 		//Signal the thread to be closed
 		BankLoadEventArray[THREAD_EXIT_EVENT_INDEX] = true;
+		SetEvent(BankLoadEventHandle);
 
 		//Wait for thread to close
 		BankLoadingThreadObject.join();
+
+		//Close up the bank loading event
+		CloseHandle(BankLoadEventHandle);
 
 		ov_clear(&VorbisFileObject);
 		Logger::Log(std::format(L"Destroyed {}", FilePath));
@@ -126,6 +137,7 @@ namespace DivergenceEngine
 	{
 		SoundEffectInstance->Stop();
 		RestartRequested = true;
+		SetEvent(BankLoadEventHandle);
 	}
 
 	void OGGAudioInstance::Pause()
@@ -227,64 +239,62 @@ namespace DivergenceEngine
 	//Consider replacing atomic bools with either semaphores or manual reset events
 	void OGGAudioInstance::BankLoadingThread()
 	{
+		//Removes thread priority boost so it doesn't preempt the audio thread and cause crackling.
+		SetThreadPriorityBoost(GetCurrentThread(), TRUE);
+
+		//Set the thread priority to below normal so it doesn't preempt the audio thread and cause crackling.
+		SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL);
+
 		while (true)
 		{
-			//Search for a signal from the array of event booleans and get the index for the signal code
-			bool searchingForSignal = true;
-			uint32_t signalCode = THREAD_EXIT_EVENT_INDEX;
-			while (searchingForSignal)
-			{
-				Sleep(500);
-
-				if (RestartRequested)
-				{
-					RestartRequested = false;
-
-					//Mark all banks as requiring a refill
-					for (size_t index = 0; index < NUMBER_OF_BANKS; index++)
-					{
-						BankLoadEventArray[index] = true;
-					}
-
-					//Seek to the beginning of the file
-					ov_pcm_seek(&VorbisFileObject, 0);
-
-					//Load all banks
-					for (uint32_t index = 0; index < NUMBER_OF_BANKS; index++)
-					{
-						LoadBank(index);
-					}
-
-					//Mark all banks filled
-					for (size_t index = 0; index < NUMBER_OF_BANKS; index++)
-					{
-						BankLoadEventArray[index] = false;
-					}
-
-					//Signal to the audio thread that the banks have been refreshed
-					BanksRefreshed = true;
-				}
-
-				for (uint32_t index = 0; index < NUMBER_OF_EVENTS; index++)
-				{
-					if (BankLoadEventArray[index])
-					{
-						signalCode = index;
-						searchingForSignal = false;
-						break;
-					}
-				}
-			}
+			//Wait for event to be signaled that bank needs to be loaded (or 15 ms since the event doesn't get set in the BufferNeeded function to avoid crackling)
+			WaitForSingleObject(BankLoadEventHandle, 500);
 
 			//If the thread is signaled to exit, exit
-			if (signalCode == THREAD_EXIT_EVENT_INDEX)
+			if (BankLoadEventArray[THREAD_EXIT_EVENT_INDEX])
 			{
 				break;
 			}
 
-			//If it has made it here, the signal is to load a new bank
-			LoadBank(signalCode);
-			BankLoadEventArray[signalCode] = false;
+			//If a restart to the audio has been requested, seek to the beginning and have all banks refreshed
+			if (RestartRequested)
+			{
+				RestartRequested = false;
+
+				//Mark all banks as requiring a refill
+				for (size_t index = 0; index < NUMBER_OF_BANKS; index++)
+				{
+					BankLoadEventArray[index] = true;
+				}
+
+				//Seek to the beginning of the file
+				ov_pcm_seek(&VorbisFileObject, 0);
+
+				//Load all banks
+				for (size_t index = 0; index < NUMBER_OF_BANKS; index++)
+				{
+					LoadBank(index);
+				}
+
+				//Mark all banks filled
+				for (size_t index = 0; index < NUMBER_OF_BANKS; index++)
+				{
+					BankLoadEventArray[index] = false;
+				}
+
+				//Signal to the audio thread that the banks have been refreshed
+				BanksRefreshed = true;
+			}
+
+			//Refresh all banks that have been signaled for refill
+			for (size_t index = 0; index < NUMBER_OF_BANKS; index++)
+			{
+				if (BankLoadEventArray[index])
+				{
+					LoadBank(index);
+					BankLoadEventArray[index] = false;
+				}
+			}
 		}
 
 		ThreadIsRunning = false;
@@ -333,7 +343,7 @@ namespace DivergenceEngine
 				std::wstring message = std::format(L"Failed to decode audio file '{}' (Vorbis error {})", FilePath, currentBytesRead);
 				Logger::Log(message);
 
-				//Displays message box letting user know the error
+				//Displays message box letting user know the error (If this was on the main thread it would have shown a window as it went up the stack but, this stack doesn't lead to main)
 				MessageBoxW(nullptr, message.c_str(), L"Audio Error", MB_OK | MB_ICONERROR);
 
 				//Crash or allow upper layer to catch
