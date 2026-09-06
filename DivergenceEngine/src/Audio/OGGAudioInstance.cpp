@@ -189,7 +189,7 @@ namespace DivergenceEngine
 			StopLoadingBuffers = false;
 		}
 
-		//Calculate max buffer size the same way as done in WAVs using ((byteRate*128) / (MAX_NUM_BANKS*2205))*PlaybackSpeed
+		//Calculate max buffer size the same way as done in WAVs using ((byteRate*128) / (MAX_BUFFERS*2205))*PlaybackSpeed
 		long pcmByteRate = BlockAlign * VorbisInfo->rate;
 		long targetBufferSize = ((128 * pcmByteRate) / (2205 * MAX_BUFFERS)) * static_cast<uint32_t>(CurrentPlaybackSpeed.load());
 

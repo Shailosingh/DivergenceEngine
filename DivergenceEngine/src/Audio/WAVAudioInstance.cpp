@@ -171,7 +171,7 @@ namespace DivergenceEngine
 		//Get the target buffer size
 		//If the byte rate is 176400 and a max number of buffers is 5, then 2048*5/176400 ~= 0.058 (128/2205) seconds for all 5 buffers or 0.0116 seconds per buffer (pretty good buffer sizing for latency, don't hear crackling either)
 		//Multiplying by PlaybackSpeed so the buffers can keep up without crackle (might cause latency, check later)
-		//Since max buffers and byte rate can technically change (I will for 0.058 second latency I will calculate ((byteRate*128) / (MAX_NUM_BANKS*2205))*PlaybackSpeed)
+		//Since max buffers and byte rate can technically change (I will for 0.058 second latency calculate ((byteRate*128) / (MAX_BUFFERS*2205))*PlaybackSpeed)
 		uint32_t targetBufferSize = ((128*FileInfo.FormatChunk.ByteRate)/(2205* MAX_BUFFERS))*static_cast<uint32_t>(CurrentPlaybackSpeed.load());
 
 		//This while loop ensures all the buffers needed are given at one time and the callback doesn't have to constantly be called killing performance
